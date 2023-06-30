@@ -40,10 +40,12 @@ export class AuthService {
     }
     try {
       const data: IUser = {
-        firstName: dto.first_name,
-        lastName: dto.last_name,
-        email: dto.email,
-        password: dto.password,
+        email: "example@example.com",
+        firstName: "John",
+        lastName: "Doe",
+        password: "password123",
+        role: "student",
+        isVerified: false,
       };
 
       const user = await this.userRepository.save(data);
