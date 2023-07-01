@@ -1,10 +1,9 @@
-import {IUser} from '../user';
-
+import { IUser } from "../user";
 
 interface IUserRepository {
   findById(id: string): Promise<IUser | null>;
   findByEmail(email: string): Promise<IUser | null>;
-  save(user: IUser): Promise<IUser>;
+  save(data: any): Promise<IUser>;
   update(user: IUser): Promise<IUser>;
   delete(id: string): Promise<void>;
 }

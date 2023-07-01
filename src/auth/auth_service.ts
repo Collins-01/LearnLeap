@@ -5,6 +5,7 @@ import SignupDTO from "./dtos/signup.dto";
 import { IUser } from "../user/user";
 import { MailService } from "../mail/mail.service";
 import { ForgotPasswordDTO } from "./dtos/forgot-password.dto";
+import { VerifyOtpDTO } from "./dtos/verify_otp.dto";
 export class AuthService {
   private userRepository: IUserRepository;
   private mailService: MailService;
@@ -39,15 +40,7 @@ export class AuthService {
       throw new Error("User already exists");
     }
     try {
-      const data: IUser = {
-        email: "example@example.com",
-        firstName: "John",
-        lastName: "Doe",
-        password: "password123",
-        role: "student",
-        isVerified: false,
-      };
-
+      const data = {};
       const user = await this.userRepository.save(data);
       await this.mailService.sendMail({
         body: "",
@@ -77,5 +70,17 @@ export class AuthService {
     });
 
     return `An OTP has been sent to yput email address`;
+  }
+  
+
+
+  /**
+   * verifyOTP
+   */
+  public verifyOTP(dto:VerifyOtpDTO) {
+    // Check if the email address exists in the cache
+    // Check if the time has expired
+    // Check if the supposed user has already been verified.
+    // verify if the code matches that of the cache.
   }
 }

@@ -1,7 +1,5 @@
+import { Request, Response } from "express";
 import { AuthService } from "./auth_service";
-import { ForgotPasswordDTO } from "./dtos/forgot-password.dto";
-import { LoginDto } from "./dtos/login.dto";
-import SignupDTO from "./dtos/signup.dto";
 
 export class AuthController {
   private authService: AuthService;
@@ -12,21 +10,44 @@ export class AuthController {
   /**
    * login
    */
-  public async login(dto: LoginDto) {
-    return await this.authService.login(dto);
+  public async login(request: Request, response: Response) {
+    const data = await this.authService.login(request.body);
+    return response.status(200).json({
+      message: "Successfully logged in",
+      data,
+    });
   }
 
   /**
    * signup
    */
-  public async signup(dto: SignupDTO) {
-    return await this.authService.signup(dto);
+  public async signup(request: Request, response: Response) {
+    const data = await this.authService.signup(request.body);
+    return response.status(201).json({
+      message: "User created successfully",
+      data,
+    });
   }
 
   /**
    * forgotPassword
    */
-  public async forgotPassword(dto: ForgotPasswordDTO) {
-    return await this.authService.forgotPassword(dto);
+  public async forgotPassword(request: Request, response: Response) {
+    const data = await this.authService.forgotPassword(request.body);
+    return response.status(200).json({
+      message: "Success",
+      data,
+    });
+  }
+
+  /**
+   * verifyOTP
+   */
+  public async verifyOTP(request: Request, response: Response) {
+    const data = await this.authService.verifyOTP(request.body);
+    return response.status(200).json({
+      message: "Account successsfully verified ",
+      data,
+    });
   }
 }
