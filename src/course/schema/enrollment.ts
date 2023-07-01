@@ -1,41 +1,25 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface IEnrollment extends Document {
-  title: string;
-  description: string;
-  instructorId: string; // Reference to the User model
-  price: number;
-  type: string;
+export interface IEnrollment extends Document {
+  userId: string; // Reference to the User model
+  courseId: string; // Reference to the Course model
+  enrolledAt: Date;
 }
 
 const enrollmentSchema: Schema<IEnrollment> = new Schema({
-  title: {
-    type: String,
-    required: [true, "Please provide a title"],
-  },
-  description: {
-    type: String,
-    required: [true, "Please provide a description"],
-  },
-  instructorId: {
+  userId: {
     type: String,
     ref: "User", // Reference the User model
-    required: [true, "Please provide an instructor"],
+    required: [true, "Please provide a user"],
   },
-  price: {
-    type: Number,
-    required: [true, "Please provide a price"],
-  },
-  type: {
+  courseId: {
     type: String,
-    required: [true, "Please provide a type"],
-    enum: [
-      "Computer Science",
-      "Engineering",
-      "Mathematics",
-      "Physics",
-      "Chemistry",
-    ],
+    ref: "Course", // Reference the Course model
+    required: [true, "Please provide a course"],
+  },
+  enrolledAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 

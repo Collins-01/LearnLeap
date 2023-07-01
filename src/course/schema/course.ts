@@ -1,11 +1,13 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface ICourse extends Document {
+export interface ICourse extends Document {
   title: string;
   description: string;
   instructorId: string; // Reference to the User model
   price: number;
   type: string;
+  createdAt: Date;
+  rating: number;
 }
 
 const courseSchema: Schema<ICourse> = new Schema({
@@ -20,7 +22,7 @@ const courseSchema: Schema<ICourse> = new Schema({
   instructorId: {
     type: String,
     ref: "User", // Reference the User model
-    required: [true, "Please provide an instructor"],
+    required: [true, "Please provide an instructorId"],
   },
   price: {
     type: Number,
@@ -29,7 +31,21 @@ const courseSchema: Schema<ICourse> = new Schema({
   type: {
     type: String,
     required: [true, "Please provide a type"],
-    enum: ["Computer Science", "Engineering", "Mathematics", "Physics", "Chemistry"],
+    enum: [
+      "Computer Science",
+      "Engineering",
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+    ],
+  },
+  rating: {
+    type: Number,
+    default: 0.0,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
   },
 });
 
