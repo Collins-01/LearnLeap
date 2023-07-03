@@ -11,6 +11,7 @@ export class AuthController {
    * login
    */
   public async login(request: Request, response: Response) {
+    console.log(`Request Body: ${JSON.stringify(request.body)}`);
     const data = await this.authService.login(request.body);
     return response.status(200).json({
       message: "Successfully logged in",

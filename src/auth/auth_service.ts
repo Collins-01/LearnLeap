@@ -18,40 +18,42 @@ export class AuthService {
    * login
    */
   public async login(dto: LoginDto) {
-    const user = await this.userRepository.findByEmail(dto.email);
-    if (!user) {
-      throw new Error("User not found");
-    }
-    if (!user.isVerified) {
-      throw new Error("User account not verified");
-    }
-    const isMatch = await bcrypt.compare(user.password, dto.password);
-    if (!isMatch) {
-      // Throw incorrect password...
-    }
+    return `Login Data ${JSON.stringify(dto)}`;
+    // const user = await this.userRepository.findByEmail(dto.email);
+    // if (!user) {
+    //   throw new Error("User not found");
+    // }
+    // if (!user.isVerified) {
+    //   throw new Error("User account not verified");
+    // }
+    // const isMatch = await bcrypt.compare(user.password, dto.password);
+    // if (!isMatch) {
+    //   // Throw incorrect password...
+    // }
   }
 
   /**
    * signup
    */
   public async signup(dto: SignupDTO) {
-    const userExists = await this.userRepository.findByEmail(dto.email);
-    if (userExists) {
-      throw new Error("User already exists");
-    }
-    try {
-      const data = {};
-      const user = await this.userRepository.save(data);
-      await this.mailService.sendMail({
-        body: "",
-        to: "",
-        from: "",
-      });
-      //   Send OTP to email
-      return `An Email has been sendt to ${user.email}, it expires in 5 minutes`;
-    } catch (error) {
-      throw new Error(`Failed to create user: ${error?.message}`);
-    }
+    return `Signup Data ${JSON.stringify(dto)}`;
+    // const userExists = await this.userRepository.findByEmail(dto.email);
+    // if (userExists) {
+    //   throw new Error("User already exists");
+    // }
+    // try {
+    //   const data = {};
+    //   const user = await this.userRepository.save(data);
+    //   await this.mailService.sendMail({
+    //     body: "",
+    //     to: "",
+    //     from: "",
+    //   });
+    //   //   Send OTP to email
+    //   return `An Email has been sendt to ${user.email}, it expires in 5 minutes`;
+    // } catch (error) {
+    //   throw new Error(`Failed to create user: ${error?.message}`);
+    // }
   }
 
   /**

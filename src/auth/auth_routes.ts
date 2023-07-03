@@ -10,6 +10,11 @@ export default class AuthRoutes {
   private readonly router: Router;
   private authValidators = new AuthValidators();
   constructor() {
+    const userRepository = new UserRepository();
+    const mailService = new MailService();
+    const authService = new AuthService(userRepository, mailService);
+    const authController = new AuthController(authService);
+    this.authController = authController;
     this.router = Router();
     this.authController = new AuthController(
       new AuthService(new UserRepository(), new MailService())
