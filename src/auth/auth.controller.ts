@@ -1,17 +1,15 @@
 import { Request, Response } from "express";
-import { AuthService } from "./auth_service";
+import AuthService from "./auth.service";
 
-export class AuthController {
+export default class AuthController {
   private authService: AuthService;
-  constructor(authService: AuthService) {
-    this.authService = authService;
+  constructor() {
+    this.authService = new AuthService();
   }
-
   /**
    * login
    */
   public async login(request: Request, response: Response) {
-    console.log(`Request Body: ${JSON.stringify(request.body)}`);
     const data = await this.authService.login(request.body);
     return response.status(200).json({
       message: "Successfully logged in",
@@ -34,10 +32,10 @@ export class AuthController {
    * forgotPassword
    */
   public async forgotPassword(request: Request, response: Response) {
-    const data = await this.authService.forgotPassword(request.body);
+    // const data = await this.authService.forgotPassword(request.body);
     return response.status(200).json({
       message: "Success",
-      data,
+      // data,
     });
   }
 
@@ -45,10 +43,10 @@ export class AuthController {
    * verifyOTP
    */
   public async verifyOTP(request: Request, response: Response) {
-    const data = await this.authService.verifyOTP(request.body);
+    // const data = await this.authService.verifyOTP(request.body);
     return response.status(200).json({
       message: "Account successsfully verified ",
-      data,
+      // data,
     });
   }
 }

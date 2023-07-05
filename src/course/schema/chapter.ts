@@ -20,6 +20,8 @@ const chapterSchema: Schema<IChapter> = new Schema({
     type: String,
     required: [true, "Please provide a content"],
   },
+  
+
 });
 
 const Chapter = mongoose.model<IChapter>("Chapter", chapterSchema);

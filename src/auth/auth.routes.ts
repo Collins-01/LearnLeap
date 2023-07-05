@@ -1,24 +1,14 @@
 import { Router } from "express";
-import { AuthController } from "./auth_controller";
-import { AuthService } from "./auth_service";
-import { UserRepository } from "../user/user_repository";
-import { MailService } from "../mail/mail.service";
+import AuthController from "./auth.controller";
 import AuthValidators from "./middlewares/auth_validators";
 
 export default class AuthRoutes {
-  private readonly authController: AuthController;
+  private readonly authController: AuthController = new AuthController();
   private readonly router: Router;
   private authValidators = new AuthValidators();
   constructor() {
-    const userRepository = new UserRepository();
-    const mailService = new MailService();
-    const authService = new AuthService(userRepository, mailService);
-    const authController = new AuthController(authService);
-    this.authController = authController;
     this.router = Router();
-    this.authController = new AuthController(
-      new AuthService(new UserRepository(), new MailService())
-    );
+
     this.setupRoutes();
   }
 

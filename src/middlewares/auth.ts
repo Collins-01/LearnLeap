@@ -19,7 +19,7 @@ export class AuthMiddleware {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET) as { id: string; username: string };
     const { id, username } = decoded;
-    req.user = { id, username };
+    // req.user = { id, username };
     next();
   } catch (error) {
     throw new UnauthenticatedError('Not authorized to access this route');

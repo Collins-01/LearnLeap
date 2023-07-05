@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-type UserRole = "student" | "tutor" | "admin";
+export type UserRole = "student" | "tutor" | "admin";
 
 export interface IUser extends Document {
   email: string;
@@ -54,4 +54,4 @@ const userSchema: Schema<IUser> = new Schema(
 
 const User = mongoose.model<IUser>("User", userSchema);
 
-export default { User };
+export default User;
