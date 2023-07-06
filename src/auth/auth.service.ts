@@ -35,16 +35,16 @@ export default class AuthService {
       throw new ForbiddenRequestError("Invalid credentials");
     }
 
-    const { password, ...rest } = user;
     const jwtSecret = process.env.JWT_SECRET as string;
     const tokenPayload: JWTPayload = {
       email: user.email,
       id: user._id,
     };
-    const token = await jwt.sign(tokenPayload, jwtSecret!);
+    const token = jwt.sign(tokenPayload, jwtSecret!);
 
     const data = {
-      user: rest,
+      user: user.toJSON(),
+
       access_token: token,
     };
 
@@ -60,7 +60,7 @@ export default class AuthService {
       email,
     });
     if (user) {
-      throw new Error("User already exists");
+      throw new ForbiddenRequestError("User already exists");
     }
     try {
       const hash = await bcrypt.hash(dto.password, 10);
@@ -90,8 +90,8 @@ export default class AuthService {
     const user = await User.findOne({
       email,
     });
-    if(!user){
-      throw  new NotFoundRequestError('No user found.');
+    if (!user) {
+      throw new NotFoundRequestError("No user found.");
     }
     // const user = await this.userRepository.findByEmail(dto.email);
     // if (!user) {
@@ -110,10 +110,24 @@ export default class AuthService {
   /**
    * verifyOTP
    */
-  public verifyOTP(dto: VerifyOtpDTO) {
+  public verifyOTP = async (dto: VerifyOtpDTO) => {
+    const email = dto.email;
+    const filter = { email }; // Replace with the user's email
+    const update = { $set: { isVerified: true } }; // Update the isEmailVerified field to true
+    const result = await User.updateOne(filter, update);
+
+    console.log(JSON.stringify(result));
+    if (result.modifiedCount === 1) {
+      return `Account verified successfully.`;
+    }
+    throw new NotFoundRequestError(`No user found with email ${email}`);
+    // if (result.isVerified) {
+    //   throw new ForbiddenRequestError(`User has already verified email`);
+    // }
+
     // Check if the email address exists in the cache
     // Check if the time has expired
     // Check if the supposed user has already been verified.
     // verify if the code matches that of the cache.
-  }
+  };
 }

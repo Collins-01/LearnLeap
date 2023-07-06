@@ -1,9 +1,11 @@
 import { Router } from "express";
 import AuthController from "./auth.controller";
 import AuthValidators from "./middlewares/auth_validators";
+import AuthService from "./auth.service";
 
 export default class AuthRoutes {
-  private readonly authController: AuthController = new AuthController();
+  
+  private readonly authController = new AuthController();
   private readonly router: Router;
   private authValidators = new AuthValidators();
   constructor() {

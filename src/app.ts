@@ -8,6 +8,7 @@ import express, {
 import AuthRoutes from "./auth/auth.routes";
 import { CustomAPIError } from "./errors/cutsom-error";
 import { StatusCodes } from "http-status-codes";
+import BaseErrorHandler from "./middlewares/error_handler";
 
 export default class App {
   private readonly app: Express = express();
@@ -21,7 +22,6 @@ export default class App {
     const router = Router();
     const authRoutes = new AuthRoutes();
     router.use(authRoutes.NAMESPACE, authRoutes.getRouter());
-
     this.app.use("/api", router);
   }
 
@@ -40,20 +40,7 @@ export default class App {
       const error = new Error("Not Found");
       res.status(404).json({ error: "Route not found" });
     });
-    this.app.use(this.errorHandlerMiddleware);
-  }
-
-  private errorHandlerMiddleware(
-    err: Error,
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    if (err instanceof CustomAPIError) {
-      return res.status(400).json({ msg: err.message });
-    }
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .send("Something went wrong try again later");
+    const baseErrorHandler = new BaseErrorHandler();
+    this.app.use(baseErrorHandler.errorHandlerMiddleware);
   }
 }
