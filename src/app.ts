@@ -6,9 +6,7 @@ import express, {
   NextFunction,
 } from "express";
 import AuthRoutes from "./auth/auth.routes";
-import { CustomAPIError } from "./errors/cutsom-error";
-import { StatusCodes } from "http-status-codes";
-import BaseErrorHandler from "./middlewares/error_handler";
+import CourseRoutes from "./course/course.routes";
 
 export default class App {
   private readonly app: Express = express();
@@ -21,7 +19,9 @@ export default class App {
   private setupRoutes(): void {
     const router = Router();
     const authRoutes = new AuthRoutes();
+    const courseRoutes = new CourseRoutes();
     router.use(authRoutes.NAMESPACE, authRoutes.getRouter());
+    router.use(courseRoutes.NAMESPACE, courseRoutes.getRouter());
     this.app.use("/api", router);
   }
 
@@ -40,7 +40,11 @@ export default class App {
       const error = new Error("Not Found");
       res.status(404).json({ error: "Route not found" });
     });
-    const baseErrorHandler = new BaseErrorHandler();
-    this.app.use(baseErrorHandler.errorHandlerMiddleware);
+    this.app.use(
+      (err: Error, req: Request, res: Response, next: NextFunction) => {
+        console.log(`Request: ${req.body}`);
+        return res.status(500).json({ msg: err.message });
+      }
+    );
   }
 }

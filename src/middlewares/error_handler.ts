@@ -9,12 +9,8 @@ export default class BaseErrorHandler {
     res: Response,
     next: NextFunction
   ) => {
-    if (err instanceof CustomAPIError) {
-      console.log(`CUSTOM API EROR::::: ${err}`);
-      return res.status(400).json({ msg: err.message });
-    }
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Something went wrong try again later",
-    });
+   
+
+    return res.status(500).json({ msg: err.message });
   };
 }
