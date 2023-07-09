@@ -1,10 +1,13 @@
 import { StatusCodes } from "http-status-codes";
-import { CustomAPIError } from "./cutsom-error";
+import HttpException from "./base-http-exception";
 
-export class NotFoundRequestError extends CustomAPIError {
-  statusCode: number;
-  constructor(message: any) {
-    super(message);
-    this.statusCode = StatusCodes.NOT_FOUND;
+export class NotFoundRequestError extends HttpException {
+  status: number;
+  message: string;
+
+  constructor(message: string) {
+    super(StatusCodes.NOT_FOUND, message);
+    this.status = StatusCodes.NOT_FOUND;
+    this.message = message;
   }
 }

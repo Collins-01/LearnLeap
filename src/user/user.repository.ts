@@ -1,20 +1,24 @@
-import IUserRepository from "./interfaces/user_repository.interface";
-import User, { IUser } from "./user";
+import User, { IUser } from './user';
 
-export class UserRepository implements IUserRepository {
-  findById(id: string): Promise<IUser> {
-    throw new Error("Method not implemented.");
+export default class UserRepository {
+  public async getAllUsers(): Promise<IUser[]> {
+    return User.find().exec();
   }
-  findByEmail = async (email: string): Promise<IUser | null> => {
-    return null;
-  };
-  save(user: IUser): Promise<IUser> {
-    throw new Error("Method not implemented.");
+
+  public async getUserById(id: string): Promise<IUser | null> {
+    return User.findById(id).exec();
   }
-  update(user: IUser): Promise<IUser> {
-    throw new Error("Method not implemented.");
+
+  public async addUser(user: IUser): Promise<IUser> {
+    const newUser = new User(user);
+    return newUser.save();
   }
-  delete(id: string): Promise<void> {
-    throw new Error("Method not implemented.");
+
+  public async updateUser(user: IUser): Promise<IUser | null> {
+    return User.findByIdAndUpdate(user._id, user, { new: true }).exec();
+  }
+
+  public async deleteUser(id: string): Promise<void> {
+    await User.findByIdAndDelete(id).exec();
   }
 }

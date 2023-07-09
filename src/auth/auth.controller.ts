@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response,NextFunction } from "express";
 import AuthService from "./auth.service";
 
 export default class AuthController {
@@ -10,12 +10,16 @@ export default class AuthController {
   /**
    * login
    */
-  public login = async (request: Request, response: Response) => {
+  public login = async (request: Request, response: Response,next:NextFunction) => {
     const data = await this.authService.login(request.body);
-    return response.status(200).json({
-      message: "Successfully logged in",
-      data,
-    });
+    try {
+      return response.status(200).json({
+        message: "Successfully logged in",
+        data,
+      });
+    } catch (error) {
+      next(error)
+    }
   };
 
   /**

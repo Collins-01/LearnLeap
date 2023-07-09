@@ -1,17 +1,13 @@
-import express, {
-  Express,
-  Router,
-  Request,
-  Response,
-  NextFunction,
-} from "express";
+import express, { Express, Router, Application ,NextFunction,Request,Response} from "express";
 import AuthRoutes from "./auth/auth.routes";
 import CourseRoutes from "./course/course.routes";
+import errorMiddleware from "./middlewares/error_handler";
 
 export default class App {
-  private readonly app: Express = express();
+  private app: Application;
   constructor() {
-    this.setupMiddleware();
+    this.app = express();
+    this.setupMiddlewares();
     this.setupRoutes();
     this.setupErrorHandling();
   }
@@ -25,12 +21,12 @@ export default class App {
     this.app.use("/api", router);
   }
 
-  private setupMiddleware(): void {
+  private setupMiddlewares(): void {
     // Parse JSON data
     this.app.use(express.json());
   }
 
-  public getApp(): Express {
+  public getApp(): Application {
     return this.app;
   }
 
@@ -40,11 +36,6 @@ export default class App {
       const error = new Error("Not Found");
       res.status(404).json({ error: "Route not found" });
     });
-    this.app.use(
-      (err: Error, req: Request, res: Response, next: NextFunction) => {
-        console.log(`Request: ${req.body}`);
-        return res.status(500).json({ msg: err.message });
-      }
-    );
+    this.app.use(errorMiddleware);
   }
 }

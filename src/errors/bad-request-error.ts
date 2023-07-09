@@ -1,10 +1,13 @@
 import { StatusCodes } from "http-status-codes";
-import { CustomAPIError } from "./cutsom-error";
+import HttpException from "./base-http-exception";
 
-export class BadRequestError extends CustomAPIError {
-  statusCode: number;
-  constructor(message:any) {
-    super(message);
-    this.statusCode = StatusCodes.BAD_REQUEST;
+export class BadRequestError extends HttpException {
+  status: number;
+  message: string;
+
+  constructor(message: string) {
+    super(StatusCodes.BAD_REQUEST, message);
+    this.status = StatusCodes.BAD_REQUEST;
+    this.message = message;
   }
 }

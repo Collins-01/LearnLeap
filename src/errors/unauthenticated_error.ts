@@ -1,9 +1,14 @@
-import { CustomAPIError } from "./cutsom-error";
-const { StatusCodes } = require("http-status-codes");
+import HttpException from "./base-http-exception";
 
-export class UnauthenticatedError extends CustomAPIError {
-  statusCode: number;
-  constructor(message: any) {
-    super(message, StatusCodes.UNAUTHORIZED);
+import { StatusCodes } from "http-status-codes";
+
+export class UnauthenticatedError extends HttpException {
+  status: number;
+  message: string;
+
+  constructor(message: string) {
+    super(StatusCodes.UNAUTHORIZED, message);
+    this.status = StatusCodes.UNAUTHORIZED;
+    this.message = message;
   }
 }

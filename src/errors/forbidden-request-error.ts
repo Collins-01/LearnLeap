@@ -1,10 +1,13 @@
 import { StatusCodes } from "http-status-codes";
-import { CustomAPIError } from "./cutsom-error";
+import HttpException from "./base-http-exception";
 
-export class ForbiddenRequestError extends CustomAPIError {
-  statusCode: number;
-  constructor(message: any) {
-    super(message);
-    this.statusCode = StatusCodes.FORBIDDEN;
+export class ForbiddenRequestError extends HttpException {
+  status: number;
+  message: string;
+
+  constructor(message: string) {
+    super(StatusCodes.FORBIDDEN, message);
+    this.status = StatusCodes.FORBIDDEN;
+    this.message = message;
   }
 }

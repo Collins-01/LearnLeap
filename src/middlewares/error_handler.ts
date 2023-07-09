@@ -1,16 +1,24 @@
 import { NextFunction, Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
-import { CustomAPIError } from "../errors/cutsom-error";
+import HttpException from "../errors/base-http-exception";
 
-export default class BaseErrorHandler {
-  errorHandlerMiddleware = (
-    err: Error,
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-   
+function errorMiddleware(
+  error: HttpException,
+  request: Request,
+  response: Response,
+  next: NextFunction
+) {
+  if (error instanceof HttpException) {
+    return response.status(error.status).json({
+      message: error.message,
+    });
+  }
 
-    return res.status(500).json({ msg: err.message });
-  };
+  const status = 500;
+  const message = "Something went wrong";
+  return response.status(status).json({
+    status,
+    message,
+  });
 }
+
+export default errorMiddleware;

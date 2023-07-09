@@ -1,28 +1,36 @@
-import { Request, Response, NextFunction } from "express";
-import { UnauthenticatedError } from "../errors/unauthenticated_error";
+import { NextFunction, Response, Request } from "express";
 import * as jwt from "jsonwebtoken";
+import { RequestWithUser } from "../types/request";
+import { BadRequestError, UnauthenticatedError } from "../errors";
+import UsersService from "../user/user.service";
 
-export class AuthMiddleware {
-  async authenticationMiddleware(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    const authHeader = req.headers.authorization;
+async function authMiddleware(
+  request: Request,
+  _: Response,
+  next: NextFunction
+) {
+  const requestWithUser = request as RequestWithUser;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new UnauthenticatedError('No token provided');
+  const cookies = requestWithUser.cookies;
+  if (!cookies?.Authorization) {
+    next(new UnauthenticatedError("No token found for this request"));
   }
-
-  const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as { id: string; username: string };
-    const { id, username } = decoded;
-    // req.user = { id, username };
-    next();
-  } catch (error) {
-    throw new UnauthenticatedError('Not authorized to access this route');
-  }
+    const usersService = new UsersService();
+
+    const userId = "userId";
+
+    const user = await usersService.getUserById(userId);
+    if (!user) {
+      next(new BadRequestError("Wrong credentials!"));
+    } else {
+      requestWithUser.user = user;
+      next();
+    }
+  } catch (_) {
+    next(new BadRequestError("Wrong credentials!"));
   }
 }
+
+export default authMiddleware;
