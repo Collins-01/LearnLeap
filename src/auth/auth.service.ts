@@ -44,8 +44,10 @@ export default class AuthService {
 
     const data = {
       user: user.toJSON(),
-
-      access_token: token,
+      token: {
+        token,
+        expiry: Date.now().toFixed()
+      },
     };
 
     return data;

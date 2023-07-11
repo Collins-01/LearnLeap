@@ -31,11 +31,12 @@ export default class App {
   }
 
   private setupErrorHandling(): void {
+    this.app.use(errorMiddleware);
     // Middleware for handling not found routes
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       const error = new Error("Not Found");
       res.status(404).json({ error: "Route not found" });
     });
-    this.app.use(errorMiddleware);
+    
   }
 }
