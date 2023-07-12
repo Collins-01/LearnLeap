@@ -12,7 +12,11 @@ export interface GetCacheDto {
   dataKey: string;
 }
 export default class CacheService {
-  private client = createClient({});
+  private client = createClient({
+    password: "password",
+    name: "cache",
+    username: "",
+  });
 
   constructor() {}
 
@@ -34,12 +38,11 @@ export default class CacheService {
   /**
    * getValue
    */
-  public getValue = async (dto: GetCacheDto) => {
+  public getValue = async (dto: GetCacheDto): Promise<string | undefined> => {
     try {
-      const userId = "123"; // User ID
-
       // Retrieve OTP from Redis Hash
       const response = await this.client.hGet(dto.cacheKey, dto.dataKey);
+      return response;
     } catch (error) {
       console.log(`Error fetching from  cache :: ${error}`);
     }

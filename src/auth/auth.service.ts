@@ -9,11 +9,20 @@ import { BadRequestError } from "../errors/bad-request-error";
 import jwt from "jsonwebtoken";
 import { ForbiddenRequestError } from "../errors/forbidden-request-error";
 import { NotFoundRequestError } from "../errors/not-found-request-error";
+import CacheService from "../cache/cache.service";
+import { CacheKey } from "../cache/cache-keys";
 type JWTPayload = {
   id: string;
   email: string;
 };
+
+interface OtpSchema {
+  code: string;
+  expiration: number;
+}
 export default class AuthService {
+  private cacheService = new CacheService();
+
   /**
    * login
    */
@@ -46,7 +55,7 @@ export default class AuthService {
       user: user.toJSON(),
       token: {
         token,
-        expiry: Date.now().toFixed()
+        expiry: Date.now().toFixed(),
       },
     };
 
@@ -74,6 +83,7 @@ export default class AuthService {
         password: hash,
       });
       const userInfo = await data.save();
+      await this.generateOtp(email);
       console.log(`New User Create ::::: ${JSON.stringify(userInfo)}`);
       // const data = {};
 
@@ -114,22 +124,53 @@ export default class AuthService {
    */
   public verifyOTP = async (dto: VerifyOtpDTO) => {
     const email = dto.email;
-    const filter = { email }; // Replace with the user's email
-    const update = { $set: { isVerified: true } }; // Update the isEmailVerified field to true
-    const result = await User.updateOne(filter, update);
 
-    console.log(JSON.stringify(result));
-    if (result.modifiedCount === 1) {
-      return `Account verified successfully.`;
+    const data = await this.cacheService.getValue({
+      cacheKey: CacheKey.OTP,
+      dataKey: email,
+    });
+    if (!data) {
+      throw new NotFoundRequestError(`No user found with email ${email}`);
     }
-    throw new NotFoundRequestError(`No user found with email ${email}`);
-    // if (result.isVerified) {
-    //   throw new ForbiddenRequestError(`User has already verified email`);
-    // }
+    const decoded = JSON.parse(data) as OtpSchema;
+    const date = new Date();
+    if (date.getTime() > decoded.expiration) {
+      throw new ForbiddenRequestError("OTP code has expired.");
+    }
+    if (decoded.code !== dto.code) {
+      throw new ForbiddenRequestError("Invalid OTP code.");
+    }
+    // * Validate user and delete OTP
+    await User.findOneAndUpdate({
+      $where: dto.email
+    })
+    // * Delete OTP
+  };
 
-    // Check if the email address exists in the cache
-    // Check if the time has expired
-    // Check if the supposed user has already been verified.
-    // verify if the code matches that of the cache.
+  private generateOtp = async (email: string) => {
+    const currentTime = new Date();
+    const minutesToAdd = 5;
+    currentTime.setTime(currentTime.getTime() + minutesToAdd * 60000);
+    const code = this.genrateRandomNumbers(5);
+    const date = currentTime.getTime();
+    const schema: OtpSchema = {
+      code,
+      expiration: date,
+    };
+    const encoded = JSON.stringify(schema);
+    await this.cacheService.setValue({
+      cacheKey: CacheKey.OTP,
+      data: encoded,
+      dataKey: email,
+    });
+  };
+
+  private genrateRandomNumbers = (numberOfRandomNumbers: number | 5) => {
+    let value: string = "";
+    for (let i = 0; i < numberOfRandomNumbers; i++) {
+      const randomNumber = Math.random();
+      value + randomNumber;
+    }
+    return value;
   };
 }
