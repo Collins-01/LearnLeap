@@ -14,9 +14,7 @@ export interface GetCacheDto {
 export default class CacheService {
   private client = createClient({});
 
-  constructor(){
-    
-  }
+  constructor() {}
 
   /**
  * setValue =
@@ -47,8 +45,5 @@ export default class CacheService {
     }
   };
 
-
-
-
-  
+  public deleteValue = async () => {};
 }
