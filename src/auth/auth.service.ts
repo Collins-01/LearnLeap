@@ -6,12 +6,13 @@ import { ForgotPasswordDTO } from "./dtos/forgot-password.dto";
 import { VerifyOtpDTO } from "./dtos/verify_otp.dto";
 import { BadRequestError } from "../errors/bad-request-error";
 
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { ForbiddenRequestError } from "../errors/forbidden-request-error";
 import { NotFoundRequestError } from "../errors/not-found-request-error";
 import CacheService from "../cache/cache.service";
 import { CacheKey } from "../cache/cache-keys";
-type JWTPayload = {
+import HttpException from "../errors/base-http-exception";
+export type JWTPayload = {
   id: string;
   email: string;
 };
@@ -32,16 +33,17 @@ export default class AuthService {
       email,
     });
     if (!user) {
-      throw new BadRequestError("No user found");
+      throw new HttpException(400, "No User found");
     }
     if (!user.isVerified) {
-      throw new ForbiddenRequestError(
+      throw new HttpException(
+        403,
         "User account has not been verified, please verify your account and try again."
       );
     }
     const isMatch = await bcrypt.compare(dto.password, user.password);
     if (!isMatch) {
-      throw new ForbiddenRequestError("Invalid credentials");
+      throw new HttpException(403, "Invalid credentials");
     }
 
     const jwtSecret = process.env.JWT_SECRET as string;
@@ -50,12 +52,14 @@ export default class AuthService {
       id: user._id,
     };
     const token = jwt.sign(tokenPayload, jwtSecret!);
+    const tokenInfo = jwt.verify(token, jwtSecret) as jwt.JwtPayload;
+    
 
     const data = {
       user: user.toJSON(),
       token: {
         token,
-        expiry: Date.now().toFixed(),
+        expiry: tokenInfo,
       },
     };
 
@@ -142,8 +146,8 @@ export default class AuthService {
     }
     // * Validate user and delete OTP
     await User.findOneAndUpdate({
-      $where: dto.email
-    })
+      $where: dto.email,
+    });
     // * Delete OTP
   };
 

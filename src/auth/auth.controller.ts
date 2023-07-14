@@ -1,16 +1,19 @@
-import { Request, Response,NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import AuthService from "./auth.service";
 
 export default class AuthController {
   private authService: AuthService;
   constructor() {
-    console.log("here");
     this.authService = new AuthService();
   }
   /**
    * login
    */
-  public login = async (request: Request, response: Response,next:NextFunction) => {
+  public login = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
     const data = await this.authService.login(request.body);
     try {
       return response.status(200).json({
@@ -18,19 +21,28 @@ export default class AuthController {
         data,
       });
     } catch (error) {
-      next(error)
+      console.log(`Error from sign-in: ${error}`)
+      next(error);
     }
   };
 
   /**
    * signup
    */
-  public signup = async (request: Request, response: Response) => {
-    const data = await this.authService.signup(request.body);
-    return response.status(201).json({
-      message: "User created successfully",
-      data,
-    });
+  public signup = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const data = await this.authService.signup(request.body);
+      return response.status(201).json({
+        message: "User created successfully",
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
   };
 
   /**
