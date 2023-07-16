@@ -1,5 +1,7 @@
+import HttpException from "../errors/base-http-exception";
 import CourseService from "./course.service";
 import { Request, Response, NextFunction } from "express";
+import User, { UserRole } from "../user/user";
 
 export default class CourseController {
   private courseService: CourseService;
@@ -13,6 +15,12 @@ export default class CourseController {
     response: Response,
     next: NextFunction
   ) => {
+    if (request.user?.role !== "tutor") {
+      throw new HttpException(
+        403,
+        `Only tutors are allowed to creted courses.`
+      );
+    }
     try {
       const data = await this.courseService.createCourse(
         request.body,
