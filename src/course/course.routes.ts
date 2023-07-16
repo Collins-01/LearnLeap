@@ -5,7 +5,7 @@ import authMiddleware from "../middlewares/auth";
 export default class CourseRoutes {
   private readonly courseController = new CourseController();
   private readonly router: Router;
-  private authValidators = new CourseValidators();
+  private courseValidators = new CourseValidators();
   constructor() {
     this.router = Router();
     this.setupRoutes();
@@ -13,11 +13,34 @@ export default class CourseRoutes {
   private setupRoutes(): void {
     this.router.post(
       "/create",
-      this.authValidators.validateCreateCourseRequest,
+      this.courseValidators.validateCreateCourseRequest,
       authMiddleware,
       this.courseController.createCourse
     );
-    
+
+    this.router.get(
+      "/:id",
+      this.courseValidators.validateGetSingleCourseRequest,
+      authMiddleware,
+      this.courseController.getSingleCourseById
+    );
+    this.router.delete(
+      "/:id",
+      this.courseValidators.validateGetSingleCourseRequest,
+      authMiddleware,
+      this.courseController.deleteCourse
+    );
+    this.router.get(
+      "/instructor/:id",
+      this.courseValidators.validateGetSingleCourseRequest,
+      authMiddleware,
+      this.courseController.getAllCoursesByInstructor
+    );
+    this.router.get(
+      "/all",
+      authMiddleware,
+      this.courseController.getAllCourses
+    );
   }
 
   public getRouter(): Router {

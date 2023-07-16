@@ -49,6 +49,11 @@ const courseSchema: Schema<ICourse> = new Schema({
   },
 });
 
+courseSchema.methods.toJSON = function () {
+  const courseObject = this.toObject();
+  return courseObject;
+};
+
 const Course = mongoose.model<ICourse>("Course", courseSchema);
 
 export default Course;
