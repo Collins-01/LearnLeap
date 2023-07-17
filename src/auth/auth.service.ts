@@ -6,14 +6,24 @@ import { ForgotPasswordDTO } from "./dtos/forgot-password.dto";
 import { VerifyOtpDTO } from "./dtos/verify_otp.dto";
 import { BadRequestError } from "../errors/bad-request-error";
 
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { ForbiddenRequestError } from "../errors/forbidden-request-error";
 import { NotFoundRequestError } from "../errors/not-found-request-error";
-type JWTPayload = {
+import CacheService from "../cache/cache.service";
+import { CacheKey } from "../cache/cache-keys";
+import HttpException from "../errors/base-http-exception";
+export type JWTPayload = {
   id: string;
   email: string;
 };
+
+interface OtpSchema {
+  code: string;
+  expiration: number;
+}
 export default class AuthService {
+  private cacheService = new CacheService();
+
   /**
    * login
    */
@@ -23,16 +33,17 @@ export default class AuthService {
       email,
     });
     if (!user) {
-      throw new BadRequestError("No user found");
+      throw new HttpException(400, "No User found");
     }
     if (!user.isVerified) {
-      throw new ForbiddenRequestError(
+      throw new HttpException(
+        403,
         "User account has not been verified, please verify your account and try again."
       );
     }
     const isMatch = await bcrypt.compare(dto.password, user.password);
     if (!isMatch) {
-      throw new ForbiddenRequestError("Invalid credentials");
+      throw new HttpException(403, "Invalid credentials");
     }
 
     const jwtSecret = process.env.JWT_SECRET as string;
@@ -40,12 +51,17 @@ export default class AuthService {
       email: user.email,
       id: user._id,
     };
-    const token = jwt.sign(tokenPayload, jwtSecret!);
+    const token = jwt.sign(tokenPayload, jwtSecret!, {
+      expiresIn: "2h",
+    });
+    const tokenInfo = jwt.verify(token, jwtSecret) as jwt.JwtPayload;
 
     const data = {
       user: user.toJSON(),
-
-      access_token: token,
+      token: {
+        token,
+        expiry: tokenInfo,
+      },
     };
 
     return data;
@@ -64,19 +80,38 @@ export default class AuthService {
     }
     try {
       const hash = await bcrypt.hash(dto.password, 10);
-      const data = new User({
+      const userData = new User({
         email: dto.email,
         firstName: dto.first_name,
         lastName: dto.last_name,
         role: dto.role,
         password: hash,
+        isVerified: true,
       });
-      const userInfo = await data.save();
+      const userInfo = await userData.save();
+      // await this.generateOtp(email);
       console.log(`New User Create ::::: ${JSON.stringify(userInfo)}`);
       // const data = {};
+      const jwtSecret = process.env.JWT_SECRET as string;
+      const tokenPayload: JWTPayload = {
+        email: userInfo.email,
+        id: userInfo._id,
+      };
+      const token = jwt.sign(tokenPayload, jwtSecret!, {
+        expiresIn: "2h",
+      });
+      const tokenInfo = jwt.verify(token, jwtSecret) as jwt.JwtPayload;
 
+      const data = {
+        user: userInfo.toJSON(),
+        token: {
+          token,
+          expiry: tokenInfo,
+        },
+      };
       //   Send OTP to email
-      return `An Email has been sendt to ${dto.email}, it expires in 5 minutes`;
+      // return `An Email has been sendt to ${dto.email}, it expires in 5 minutes`;
+      return data
     } catch (error) {
       throw new Error(`Failed to create user: ${error}`);
     }
@@ -112,22 +147,53 @@ export default class AuthService {
    */
   public verifyOTP = async (dto: VerifyOtpDTO) => {
     const email = dto.email;
-    const filter = { email }; // Replace with the user's email
-    const update = { $set: { isVerified: true } }; // Update the isEmailVerified field to true
-    const result = await User.updateOne(filter, update);
 
-    console.log(JSON.stringify(result));
-    if (result.modifiedCount === 1) {
-      return `Account verified successfully.`;
+    const data = await this.cacheService.getValue({
+      cacheKey: CacheKey.OTP,
+      dataKey: email,
+    });
+    if (!data) {
+      throw new NotFoundRequestError(`No user found with email ${email}`);
     }
-    throw new NotFoundRequestError(`No user found with email ${email}`);
-    // if (result.isVerified) {
-    //   throw new ForbiddenRequestError(`User has already verified email`);
-    // }
+    const decoded = JSON.parse(data) as OtpSchema;
+    const date = new Date();
+    if (date.getTime() > decoded.expiration) {
+      throw new ForbiddenRequestError("OTP code has expired.");
+    }
+    if (decoded.code !== dto.code) {
+      throw new ForbiddenRequestError("Invalid OTP code.");
+    }
+    // * Validate user and delete OTP
+    await User.findOneAndUpdate({
+      $where: dto.email,
+    });
+    // * Delete OTP
+  };
 
-    // Check if the email address exists in the cache
-    // Check if the time has expired
-    // Check if the supposed user has already been verified.
-    // verify if the code matches that of the cache.
+  private generateOtp = async (email: string) => {
+    const currentTime = new Date();
+    const minutesToAdd = 5;
+    currentTime.setTime(currentTime.getTime() + minutesToAdd * 60000);
+    const code = this.genrateRandomNumbers(5);
+    const date = currentTime.getTime();
+    const schema: OtpSchema = {
+      code,
+      expiration: date,
+    };
+    const encoded = JSON.stringify(schema);
+    await this.cacheService.setValue({
+      cacheKey: CacheKey.OTP,
+      data: encoded,
+      dataKey: email,
+    });
+  };
+
+  private genrateRandomNumbers = (numberOfRandomNumbers: number | 5) => {
+    let value: string = "";
+    for (let i = 0; i < numberOfRandomNumbers; i++) {
+      const randomNumber = Math.random();
+      value + randomNumber;
+    }
+    return value;
   };
 }

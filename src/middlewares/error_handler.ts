@@ -7,15 +7,9 @@ function errorMiddleware(
   response: Response,
   next: NextFunction
 ) {
-  if (error instanceof HttpException) {
-    return response.status(error.status).json({
-      message: error.message,
-    });
-  }
-
-  const status = 500;
-  const message = "Something went wrong";
-  return response.status(status).json({
+  const status = error.status || 500;
+  const message = error.message || "Something went wrong";
+  response.status(status).json({
     status,
     message,
   });

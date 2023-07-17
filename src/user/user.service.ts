@@ -1,10 +1,15 @@
-import { IUser } from "./user";
+import User, { IUser } from "./user";
 
 export default class UsersService {
   /**
    * name
    */
   public getUserById = async (id: string): Promise<IUser | null> => {
-    return null;
+    const user = await User.findById({
+      _id: id,
+    });
+    // console.log(user?.email);
+
+    return user;
   };
 }
