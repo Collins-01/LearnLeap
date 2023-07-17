@@ -8,6 +8,7 @@ import {
 } from "../errors";
 import UsersService from "../user/user.service";
 import { JWTPayload } from "../auth/auth.service";
+import HttpException from "../errors/base-http-exception";
 
 async function authMiddleware(
   request: Request,
@@ -32,13 +33,16 @@ async function authMiddleware(
 
     const user = await userService.getUserById(decoded.id);
     if (user !== null) {
-      requestWithUser.user = user.toJSON();
-      next();
-    }
+      // console.log(`AuthMiddleware == ${user._id}`);
+      requestWithUser.user = user;
 
-    next(new NotFoundRequestError("No user found."));
+      // console.log(`RequestWithUser == ${request.user?.firstName}`)
+      next();
+    } else {
+      next(new NotFoundRequestError("Unauthorized."));
+    }
   } catch (error) {
-    next(new BadRequestError(`${error}`));
+    next(new HttpException(401, `${error}`));
   }
 }
 

@@ -37,7 +37,7 @@ export default class CourseRoutes {
       this.courseController.getAllCoursesByInstructor
     );
     this.router.get(
-      "/all",
+      "/",
       authMiddleware,
       this.courseController.getAllCourses
     );

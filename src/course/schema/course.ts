@@ -1,11 +1,17 @@
 import mongoose, { Schema, Document } from "mongoose";
 
+enum CourseType {
+  CSC = "CSC",
+  MTH = "MTH",
+  CHM = "CHM",
+}
+
 export interface ICourse extends Document {
   title: string;
   description: string;
   instructorId: string; // Reference to the User model
   price: number;
-  type: string;
+  type: CourseType;
   createdAt: Date;
   rating: number;
 }
@@ -31,13 +37,7 @@ const courseSchema: Schema<ICourse> = new Schema({
   type: {
     type: String,
     required: [true, "Please provide a type"],
-    enum: [
-      "Computer Science",
-      "Engineering",
-      "Mathematics",
-      "Physics",
-      "Chemistry",
-    ],
+    enum: Object.values(CourseType),
   },
   rating: {
     type: Number,
@@ -49,10 +49,10 @@ const courseSchema: Schema<ICourse> = new Schema({
   },
 });
 
-courseSchema.methods.toJSON = function () {
-  const courseObject = this.toObject();
-  return courseObject;
-};
+// courseSchema.methods.toJSON = function () {
+//   const courseObject = this.toObject();
+//   return courseObject;
+// };
 
 const Course = mongoose.model<ICourse>("Course", courseSchema);
 

@@ -4,6 +4,7 @@ import { CreateCourseDto } from "./dtos";
 import { ICourseRepository } from "./interface/course_repository_interface";
 import { CourseRepository } from "./repository/course_repository";
 import { ICourse } from "./schema/course";
+import logger from "../utils/logger";
 
 export default class CourseService {
   courseRepository: ICourseRepository = new CourseRepository();
@@ -13,19 +14,28 @@ export default class CourseService {
    */
   public createCourse = async (dto: CreateCourseDto, instructorId: string) => {
     try {
-      const response = await this.courseRepository.create({
-        title: dto.title,
-        description: dto.description,
-        price: dto.price,
-        type: dto.type,
-        instructorId,
-      });
+      const response = await this.courseRepository.create(
+        {
+          title: dto.title,
+          description: dto.description,
+          price: dto.price,
+          type: dto.type,
+        },
+        instructorId
+      );
+      logger.debug(`Newly created course... ${response.toJSON()}`)
       const data = {
         message: `successfully created course titled ${dto.title}`,
         ...response.toJSON(),
       };
       return data;
     } catch (error) {
+      console.log(`Error creating course:: ${error}`);
+      logger.error("This is an error message.", {
+        additionalData: "some data",
+      });
+
+      throw new HttpException(500, `${error}`);
       // Catch and Handle MongoDB Errors
     }
   };

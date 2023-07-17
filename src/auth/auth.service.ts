@@ -51,9 +51,10 @@ export default class AuthService {
       email: user.email,
       id: user._id,
     };
-    const token = jwt.sign(tokenPayload, jwtSecret!);
+    const token = jwt.sign(tokenPayload, jwtSecret!, {
+      expiresIn: "2h",
+    });
     const tokenInfo = jwt.verify(token, jwtSecret) as jwt.JwtPayload;
-    
 
     const data = {
       user: user.toJSON(),
@@ -79,20 +80,38 @@ export default class AuthService {
     }
     try {
       const hash = await bcrypt.hash(dto.password, 10);
-      const data = new User({
+      const userData = new User({
         email: dto.email,
         firstName: dto.first_name,
         lastName: dto.last_name,
         role: dto.role,
         password: hash,
+        isVerified: true,
       });
-      const userInfo = await data.save();
-      await this.generateOtp(email);
+      const userInfo = await userData.save();
+      // await this.generateOtp(email);
       console.log(`New User Create ::::: ${JSON.stringify(userInfo)}`);
       // const data = {};
+      const jwtSecret = process.env.JWT_SECRET as string;
+      const tokenPayload: JWTPayload = {
+        email: userInfo.email,
+        id: userInfo._id,
+      };
+      const token = jwt.sign(tokenPayload, jwtSecret!, {
+        expiresIn: "2h",
+      });
+      const tokenInfo = jwt.verify(token, jwtSecret) as jwt.JwtPayload;
 
+      const data = {
+        user: userInfo.toJSON(),
+        token: {
+          token,
+          expiry: tokenInfo,
+        },
+      };
       //   Send OTP to email
-      return `An Email has been sendt to ${dto.email}, it expires in 5 minutes`;
+      // return `An Email has been sendt to ${dto.email}, it expires in 5 minutes`;
+      return data
     } catch (error) {
       throw new Error(`Failed to create user: ${error}`);
     }

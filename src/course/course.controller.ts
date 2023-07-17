@@ -1,7 +1,6 @@
 import HttpException from "../errors/base-http-exception";
 import CourseService from "./course.service";
 import { Request, Response, NextFunction } from "express";
-import User, { UserRole } from "../user/user";
 
 export default class CourseController {
   private courseService: CourseService;
@@ -71,6 +70,7 @@ export default class CourseController {
     next: NextFunction
   ) => {
     try {
+      console.log(request.user?.firstName);
       const data = await this.courseService.getAllCourses();
       return response.status(200).json(data);
     } catch (error) {
