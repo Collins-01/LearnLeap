@@ -10,6 +10,11 @@ export interface IChapter extends Document {
 }
 
 const chapterSchema: Schema<IChapter> = new Schema({
+  index: {
+    type: 'Number',
+    required: [true,'please provide and index for this chapter.'],
+    unique: true,
+  },
   courseId: {
     type: String,
     ref: "Course",
@@ -30,6 +35,14 @@ const chapterSchema: Schema<IChapter> = new Schema({
     type: Date,
     default: Date.now(),
   },
+});
+
+
+chapterSchema.pre<IChapter>('save', async function (next) {
+  const highestIndexChapter = await Chapter.findOne({}, 'index').sort('-index').exec();
+  const nextIndex = highestIndexChapter ? highestIndexChapter.index + 1 : 1;
+  this.index = nextIndex;
+  next();
 });
 
 const Chapter = mongoose.model<IChapter>("Chapter", chapterSchema);

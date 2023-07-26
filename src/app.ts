@@ -10,7 +10,7 @@ import AuthRoutes from "./auth/auth.routes";
 import CourseRoutes from "./course/course.routes";
 import errorMiddleware from "./middlewares/error_handler";
 import authMiddleware from "./middlewares/auth";
-
+import ChapterRoutes from "./chapter/chapter.routes";
 
 export default class App {
   private app: Application;
@@ -25,8 +25,10 @@ export default class App {
     const router = Router();
     const authRoutes = new AuthRoutes();
     const courseRoutes = new CourseRoutes();
+    const chapterRoutes = new ChapterRoutes();
     router.use(authRoutes.NAMESPACE, authRoutes.getRouter());
     router.use(courseRoutes.NAMESPACE, courseRoutes.getRouter());
+    router.use(chapterRoutes.NAMESPACE, chapterRoutes.getRouter());
     this.app.get("/whoami", authMiddleware, (req: Request, res: Response) => {
       return res.status(200).json({
         data: req.user,

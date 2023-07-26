@@ -1,5 +1,6 @@
 import { ICourseRepository } from "../course/interface/course_repository_interface";
 import { CourseRepository } from "../course/repository/course_repository";
+import logger from "../utils/logger";
 
 // import { NotFoundRequestError } from "../errors";
 import CreateChapterDto from "./dtos/create-chapter.dto";
@@ -24,5 +25,42 @@ export default class ChapterRepository {
     });
     const result = await data.save();
     return result.toJSON();
+  };
+
+  /**
+   * delete a chpater by id
+   */
+  public deleteById = async (id: string) => {
+    const deletdChapter = await Chapter.findByIdAndDelete(id).exec();
+    if (!deletdChapter) {
+      logger.debug("No chapter to delete");
+    } else {
+      logger.debug("Deleted Chapter with id: " + id);
+    }
+  };
+
+  /**
+   * get chapter single chapter
+   */
+  public getByID = async (id: string): Promise<IChapter | null> => {
+    const response = await Chapter.findById(id).exec();
+    if (!response) {
+      return null;
+    }
+    return response.toJSON();
+  };
+
+  /*
+  Get all chapters under a course 
+  */
+
+  public getAllChapters = async (courseId: string): Promise<IChapter[]> => {
+    const chpaters = await Chapter.find({
+      courseId: courseId,
+    })
+      .sort("index")
+      .exec();
+
+    return chpaters.map((e) => e.toJSON());
   };
 }
