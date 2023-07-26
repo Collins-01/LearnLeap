@@ -1,4 +1,4 @@
-import { IUser } from "../user";
+import { IUser } from "../schema/user";
 
 interface IUserRepository {
   findById(id: string): Promise<IUser | null>;

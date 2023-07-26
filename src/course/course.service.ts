@@ -1,5 +1,5 @@
 import HttpException from "../errors/base-http-exception";
-import { UserRole } from "../user/user";
+import { UserRole } from "../user/schema/user";
 import { CreateCourseDto } from "./dtos";
 import { ICourseRepository } from "./interface/course_repository_interface";
 import { CourseRepository } from "./repository/course_repository";

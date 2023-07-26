@@ -1,7 +1,7 @@
 import { LoginDto } from "./dtos/login.dto";
 import bcrypt from "bcrypt";
 import SignupDTO from "./dtos/signup.dto";
-import User, { IUser } from "../user/user";
+import User, { IUser } from "../user/schema/user";
 import { ForgotPasswordDTO } from "./dtos/forgot-password.dto";
 import { VerifyOtpDTO } from "./dtos/verify_otp.dto";
 import { BadRequestError } from "../errors/bad-request-error";

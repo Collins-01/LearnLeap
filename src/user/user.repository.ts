@@ -1,4 +1,4 @@
-import User, { IUser } from './user';
+import User, { IUser } from './schema/user';
 
 export default class UserRepository {
   public async getAllUsers(): Promise<IUser[]> {
