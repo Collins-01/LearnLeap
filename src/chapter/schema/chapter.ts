@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { IFIle, fileSchema } from "../../files/schema/file";
 
 export interface IChapter extends Document {
   index: number;
@@ -7,6 +8,7 @@ export interface IChapter extends Document {
   content: string;
   backgroundImage?: string | null | undefined;
   createdAt: Date;
+  resources: IFIle[]
 }
 
 const chapterSchema: Schema<IChapter> = new Schema({
@@ -31,6 +33,7 @@ const chapterSchema: Schema<IChapter> = new Schema({
   backgroundImage: {
     type: String,
   },
+  resources: [fileSchema],
   createdAt: {
     type: Date,
     default: Date.now(),

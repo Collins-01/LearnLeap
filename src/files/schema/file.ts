@@ -1,4 +1,4 @@
-import { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
 export enum FileType {
   IMAGE = "image",
@@ -13,7 +13,7 @@ export interface IFIle extends Document {
   type: FileType;
   createdAt: Date;
 }
-const fileSchema: Schema<IFIle> = new Schema({
+export const fileSchema: Schema<IFIle> = new Schema({
   url: {
     type: "string",
     required: [true, "A url to the file is needed"],
@@ -25,13 +25,17 @@ const fileSchema: Schema<IFIle> = new Schema({
   key: {
     type: "string",
     required: [true, "a name to the file is required."],
+    unique: true,
   },
   type: {
     type: "string",
-    enum:Object.values(FileType)
+    enum: Object.values(FileType),
   },
   createdAt: {
     type: Date,
     default: Date.now(),
   },
 });
+
+const File = mongoose.model<IFIle>("File",fileSchema);
+export default File
