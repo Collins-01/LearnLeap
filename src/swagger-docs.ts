@@ -5,12 +5,15 @@ const options: swaggerJsdoc.Options = {
     definition: {
       openapi: '3.0.0',
       info: {
-        title: 'My API Documentation',
+        title: 'LeapLearn API Documentation',
         version: '1.0.0',
-        description: 'Documentation for my API',
+        description: 'Documentation for my LeapLearn Software.',
       },
     },
-    apis: ['./index.ts'], // This is the file where you wrote your API routes
+    apis: ['./app.ts', 'src/auth/auth.routes.ts'], // This is the file where you wrote your API routes
   };
 
   const specs = swaggerJsdoc(options);
+
+
+  export default specs;

@@ -11,6 +11,8 @@ import CourseRoutes from "./course/course.routes";
 import errorMiddleware from "./middlewares/error_handler";
 import authMiddleware from "./middlewares/auth";
 import ChapterRoutes from "./chapter/chapter.routes";
+import swaggerUi from 'swagger-ui-express';
+import specs from "./swagger-docs";
 
 export default class App {
   private app: Application;
@@ -40,6 +42,7 @@ export default class App {
   private setupMiddlewares(): void {
     // Parse JSON data
     this.app.use(express.json());
+    this.app.use('/documentation', swaggerUi.serve, swaggerUi.setup(specs));
   }
 
   private setupErrorHandling() {
