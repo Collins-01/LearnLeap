@@ -6,7 +6,7 @@ import {
   NotFoundRequestError,
   UnauthenticatedError,
 } from "../errors";
-import UsersService from "../user/user.service";
+import UsersService from "../user/services/user.service";
 import { JWTPayload } from "../auth/auth.service";
 import HttpException from "../errors/base-http-exception";
 

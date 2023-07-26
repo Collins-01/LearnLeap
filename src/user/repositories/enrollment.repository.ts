@@ -2,7 +2,7 @@ import { CreateEnrollmentDTO } from "../dtos/create_enrollment.dto";
 import { UpdateEnrollmentDTO } from "../dtos/update_enrollment.dto";
 import IEnrollmentRepository from "../interfaces/enrollment-repository.interface";
 import Enrollment, { IEnrollment } from "../schema/enrollments";
-class EnrollmentRepository implements IEnrollmentRepository {
+export default class EnrollmentRepository implements IEnrollmentRepository {
   updateEnrollmentStatus = async (
     userId: string,
     dto: UpdateEnrollmentDTO

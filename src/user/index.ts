@@ -1,4 +1,4 @@
-import { UserRepository } from "./user.repository";
+import { UserRepository } from "./repositories/user.repository";
 export default {
     UserRepository
 }

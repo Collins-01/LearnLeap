@@ -1,4 +1,4 @@
-import User, { IUser } from "./schema/user";
+import User, { IUser } from "../schema/user";
 
 export default class UsersService {
   /**
