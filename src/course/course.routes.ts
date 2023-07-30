@@ -1,4 +1,5 @@
 import { Router } from "express";
+import 'express-async-errors';
 import CourseController from "./course.controller";
 import CourseValidators from "./middlewares/course_validations";
 import authMiddleware from "../middlewares/auth";

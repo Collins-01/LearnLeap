@@ -27,7 +27,7 @@ export default class AuthController {
   };
 
   /**
-   * signup
+ * signup
    */
   public signup = async (
     request: Request,

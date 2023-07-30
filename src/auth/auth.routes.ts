@@ -1,4 +1,5 @@
 import { Router } from "express";
+// import 'express-async-errors';
 import AuthController from "./auth.controller";
 import AuthValidators from "./middlewares/auth_validators";
 import AuthService from "./auth.service";

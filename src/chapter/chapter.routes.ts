@@ -1,4 +1,5 @@
 import { Router } from "express";
+import 'express-async-errors';
 import ChaptersController from "./chapter.controller";
 import ChapterValidators from "./middlewares/chapter-validator";
 import authMiddleware from "../middlewares/auth";
