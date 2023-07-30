@@ -11,6 +11,10 @@ const bootstrap = async (includeDB: boolean) => {
     await db.connect().then((_) => {
       console.log(`Database connected sucessfully`);
     });
+    const app = new App().getApp();
+    app.listen(5000, () => {
+      console.log(`Server listening on port 3000`);
+    });
   } else {
     logger.info("Starting server without Database connection...............");
     const app = new App().getApp();
