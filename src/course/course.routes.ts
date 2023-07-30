@@ -3,6 +3,7 @@ import 'express-async-errors';
 import CourseController from "./course.controller";
 import CourseValidators from "./middlewares/course_validations";
 import authMiddleware from "../middlewares/auth";
+import creatorMiddleware from "../middlewares/creator_middleware";
 export default class CourseRoutes {
   private readonly courseController = new CourseController();
   private readonly router: Router;
@@ -16,6 +17,7 @@ export default class CourseRoutes {
       "/create",
       this.courseValidators.validateCreateCourseRequest,
       authMiddleware,
+      creatorMiddleware,
       this.courseController.createCourse
     );
 

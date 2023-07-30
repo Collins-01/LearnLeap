@@ -15,7 +15,7 @@ const chapterSchema: Schema<IChapter> = new Schema({
   index: {
     type: 'Number',
     required: [true,'please provide and index for this chapter.'],
-    unique: true,
+    // unique: true,
   },
   courseId: {
     type: String,

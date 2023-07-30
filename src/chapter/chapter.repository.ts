@@ -3,7 +3,7 @@ import { CourseRepository } from "../course/repository/course_repository";
 import logger from "../utils/logger";
 
 // import { NotFoundRequestError } from "../errors";
-import CreateChapterDto from "./dtos/create-chapter.dto";
+import { CreateChapterDto } from "./dtos/index";
 import Chapter, { IChapter } from "./schema/chapter";
 export default class ChapterRepository {
   private courseRepository: ICourseRepository = new CourseRepository();
@@ -22,6 +22,7 @@ export default class ChapterRepository {
       title: dto.title,
       content: dto.content,
       backgroundImage: dto.background_image,
+      index: dto.index,
     });
     const result = await data.save();
     return result.toJSON();
@@ -43,7 +44,9 @@ export default class ChapterRepository {
    * get chapter single chapter
    */
   public getByID = async (id: string): Promise<IChapter | null> => {
-    const response = await Chapter.findById(id).exec();
+    const response = await Chapter.findById({
+      _id: id,
+    }).exec();
     if (!response) {
       return null;
     }

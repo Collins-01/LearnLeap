@@ -1,6 +1,6 @@
 import { NotFoundRequestError } from "../errors";
 import ChapterRepository from "./chapter.repository";
-import CreateChapterDto from "./dtos/create-chapter.dto";
+import {CreateChapterDto} from "./dtos/index";
 
 export default class ChapterService {
   private chapterRepository: ChapterRepository = new ChapterRepository();

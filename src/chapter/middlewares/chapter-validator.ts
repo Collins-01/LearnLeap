@@ -8,9 +8,10 @@ export default class ChapterValidators {
   ) => {
     const schema = Joi.object({
       title: Joi.string().required().min(5),
-      description: Joi.string().min(10).required(),
-      price: Joi.number().required(),
-      type: Joi.string().required(),
+      content: Joi.string().min(10).required(),
+      course_id: Joi.string().required(),
+      background_image: Joi.string(),
+      index: Joi.number().required()
     });
     const { error } = schema.validate(req.body);
     if (error) {
