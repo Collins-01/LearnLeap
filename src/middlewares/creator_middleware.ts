@@ -3,6 +3,7 @@ import * as jwt from "jsonwebtoken";
 import { RequestWithUser } from "../types/request";
 import {
   BadRequestError,
+  ForbiddenRequestError,
   NotFoundRequestError,
   UnauthenticatedError,
 } from "../errors";
@@ -32,10 +33,16 @@ async function creatorMiddleware(
     const decoded = jwt.verify(token, jwtSecret) as JWTPayload;
 
     const user = await userService.getUserById(decoded.id);
-    if (user !== null && user.role === "tutor") {
+    if (!user) {
+      next(
+        new NotFoundRequestError("Invalid Session, please login and try again.")
+      );
+    }
+    if (user!.role === "tutor") {
+      requestWithUser.user = user!;
       next();
     } else {
-      next(new NotFoundRequestError("Unauthorized."));
+      next(new ForbiddenRequestError("access denied, a student can not perform this operation."));
     }
   } catch (error) {
     next(new HttpException(401, `${error}`));
