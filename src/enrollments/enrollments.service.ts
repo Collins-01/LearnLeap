@@ -1,10 +1,11 @@
-import { ICourseRepository } from "../../course/interface/course_repository_interface";
-import { CourseRepository } from "../../course/repository/course_repository";
-import { ForbiddenRequestError, NotFoundRequestError } from "../../errors";
-import HttpException from "../../errors/base-http-exception";
-import { CreateEnrollmentDTO } from "../dtos/create_enrollment.dto";
-import IEnrollmentRepository from "../interfaces/enrollment-repository.interface";
-import EnrollmentRepository from "../repositories/enrollment.repository";
+import { ICourseRepository } from "../course/interface/course_repository_interface";
+import { CourseRepository } from "../course/repository/course_repository";
+import { ForbiddenRequestError, NotFoundRequestError } from "../errors";
+import HttpException from "../errors/base-http-exception";
+import { CreateEnrollmentDTO } from "./dtos/create_enrollment.dto";
+import IEnrollmentRepository from "./enrollment-repository.interface";
+import EnrollmentRepository from "./enrollment.repository";
+
 
 export default class EnrollmentsService {
   private enrollmentsRepository: IEnrollmentRepository =

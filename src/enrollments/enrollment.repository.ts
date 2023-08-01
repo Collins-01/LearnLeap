@@ -1,7 +1,8 @@
-import { CreateEnrollmentDTO } from "../dtos/create_enrollment.dto";
-import { UpdateEnrollmentDTO } from "../dtos/update_enrollment.dto";
-import IEnrollmentRepository from "../interfaces/enrollment-repository.interface";
-import Enrollment, { IEnrollment } from "../schema/enrollments";
+import Enrollment, { IEnrollment } from "../user/schema/enrollments";
+import { CreateEnrollmentDTO } from "./dtos/create_enrollment.dto";
+import { UpdateEnrollmentDTO } from "./dtos/update_enrollment.dto";
+import IEnrollmentRepository from "./enrollment-repository.interface";
+
 export default class EnrollmentRepository implements IEnrollmentRepository {
   updateEnrollmentStatus = async (
     userId: string,
