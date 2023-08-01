@@ -4,6 +4,7 @@
 - Media files uploads and streaming
 - OTP workflow
 - Wallet system for instructors
+- Documentation
 
 
 

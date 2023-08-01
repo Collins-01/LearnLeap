@@ -1,4 +1,4 @@
-import Enrollment, { IEnrollment } from "../user/schema/enrollments";
+import Enrollment, { IEnrollment } from "./schema/enrollments";
 import { CreateEnrollmentDTO } from "./dtos/create_enrollment.dto";
 import { UpdateEnrollmentDTO } from "./dtos/update_enrollment.dto";
 import IEnrollmentRepository from "./enrollment-repository.interface";

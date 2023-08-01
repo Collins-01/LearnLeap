@@ -1,6 +1,6 @@
 import { CreateEnrollmentDTO } from "./dtos/create_enrollment.dto";
 import { UpdateEnrollmentDTO } from "./dtos/update_enrollment.dto";
-import { IEnrollment } from "../user/schema/enrollments";
+import { IEnrollment } from "./schema/enrollments";
 
 interface IEnrollmentRepository {
   getAllUserEnrollments(userId: string): Promise<IEnrollment[]>;
