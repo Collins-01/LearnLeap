@@ -6,7 +6,6 @@ import { CreateEnrollmentDTO } from "./dtos/create_enrollment.dto";
 import IEnrollmentRepository from "./enrollment-repository.interface";
 import EnrollmentRepository from "./enrollment.repository";
 
-
 export default class EnrollmentsService {
   private enrollmentsRepository: IEnrollmentRepository =
     new EnrollmentRepository();
@@ -14,7 +13,7 @@ export default class EnrollmentsService {
 
   createEnrollment = async (dto: CreateEnrollmentDTO, userId: string) => {
     const enrollmentExists =
-      await this.enrollmentsRepository.getSingleEnrollment(
+      await this.enrollmentsRepository.getSingleEnrollmentByCourseAndUserId(
         userId,
         dto.courseId
       );
@@ -41,5 +40,29 @@ export default class EnrollmentsService {
       );
     }
     return response;
+  };
+
+  cancelEnrollment = async (enrollmentId: string, userId: string) => {
+    const enrollment = await this.enrollmentsRepository.getSingleEnrollment(
+      enrollmentId
+    );
+    if (!enrollment) {
+      throw new NotFoundRequestError("Enrollment not found.");
+    }
+    if (enrollment.userId !== userId) {
+      throw new NotFoundRequestError("User did not enroll for this course");
+    }
+    const result = await this.enrollmentsRepository.deleteEnrollment(
+      enrollmentId
+    );
+    if (!result) {
+      throw new HttpException(500, "failed to delete enrollment.");
+    }
+    return "successfully deleted enrollment.";
+  };
+
+  getAllEnrollments = async (userId: string) => {
+    const result = await this.enrollmentsRepository.getAllEnrollments(userId);
+    return result;
   };
 }

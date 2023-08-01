@@ -1,5 +1,6 @@
 import { CreateEnrollmentDTO } from "./dtos/create_enrollment.dto";
 import { UpdateEnrollmentDTO } from "./dtos/update_enrollment.dto";
+import { IEnrollmentPayload } from "./interface/enrollments-payload-interface";
 import { IEnrollment } from "./schema/enrollments";
 
 interface IEnrollmentRepository {
@@ -10,7 +11,7 @@ interface IEnrollmentRepository {
     dto: UpdateEnrollmentDTO
   ): Promise<IEnrollment | null>;
 
-  getSingleEnrollment(
+  getSingleEnrollmentByCourseAndUserId(
     userId: string,
     courseId: string
   ): Promise<IEnrollment | null>;
@@ -18,6 +19,10 @@ interface IEnrollmentRepository {
     dto: CreateEnrollmentDTO,
     userId: string
   ): Promise<IEnrollment | null>;
+
+  getSingleEnrollment(id: string): Promise<IEnrollment | null>;
+  deleteEnrollment(id: string): Promise<boolean>;
+  getAllEnrollments(userId: string): Promise<IEnrollmentPayload[]>;
 }
 
 export default IEnrollmentRepository;

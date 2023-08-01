@@ -2,6 +2,7 @@ import Enrollment, { IEnrollment } from "./schema/enrollments";
 import { CreateEnrollmentDTO } from "./dtos/create_enrollment.dto";
 import { UpdateEnrollmentDTO } from "./dtos/update_enrollment.dto";
 import IEnrollmentRepository from "./enrollment-repository.interface";
+import { IEnrollmentPayload } from "./interface/enrollments-payload-interface";
 
 export default class EnrollmentRepository implements IEnrollmentRepository {
   updateEnrollmentStatus = async (
@@ -18,7 +19,7 @@ export default class EnrollmentRepository implements IEnrollmentRepository {
     }
     return response.toJSON();
   };
-  getSingleEnrollment = async (
+  getSingleEnrollmentByCourseAndUserId = async (
     userId: string,
     courseId: string
   ): Promise<IEnrollment | null> => {
@@ -47,5 +48,24 @@ export default class EnrollmentRepository implements IEnrollmentRepository {
   getAllUserEnrollments = async (userId: string): Promise<IEnrollment[]> => {
     const response = await Enrollment.find({ _id: userId }).exec();
     return response.map((e) => e.toJSON());
+  };
+
+  getSingleEnrollment = async (id: string): Promise<IEnrollment | null> => {
+    const enrollment = await Enrollment.findById(id);
+    if (!enrollment) return null;
+    else return enrollment;
+  };
+
+  deleteEnrollment = async (id: string): Promise<boolean> => {
+    const result = await Enrollment.deleteOne({ _id: id });
+    if (result.deletedCount === 1) return true;
+    else return false;
+  };
+
+  getAllEnrollments = async (userId: string): Promise<IEnrollmentPayload[]> => {
+    const enrollments = await Enrollment.find().populate("title", "", "").where({
+      userId,
+    });
+    return [];
   };
 }
