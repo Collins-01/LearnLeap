@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import HttpException from "../errors/base-http-exception";
 
+
 function errorMiddleware(
   error: HttpException,
   request: Request,

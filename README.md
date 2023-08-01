@@ -1,3 +1,13 @@
+# TODO
+- Agora LiveStream
+- Paystack Integration
+- Media files uploads and streaming
+- OTP workflow
+- Wallet system for instructors
+
+
+
+
 # Project Overview
 
 
