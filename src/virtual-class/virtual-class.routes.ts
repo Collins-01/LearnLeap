@@ -13,12 +13,20 @@ export class VirtualClassRoutes {
 
   private setupRoutes(): void {
     this.router.post(
-      "/create",
+      "/create-class",
       //   this..validateCreateCourseRequest,
       authMiddleware,
       creatorMiddleware,
       this.virtualClassController.createVirtualClass
     );
+
+    this.router.post(
+        "/generate-token",
+        //   this..validateCreateCourseRequest,
+        authMiddleware,
+        creatorMiddleware,
+        this.virtualClassController.createVirtualClass
+      );
   }
 
   public getRouter(): Router {

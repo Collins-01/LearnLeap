@@ -6,4 +6,7 @@ export interface IVirtualClasRepository {
     dto: CreateVirtualClassDto,
     userId: string
   ): Promise<IVirtualClass | null>;
+
+
+  getClassById (id: string): Promise<IVirtualClass | null>;
 }

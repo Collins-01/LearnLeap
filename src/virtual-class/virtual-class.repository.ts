@@ -3,6 +3,11 @@ import { IVirtualClasRepository } from "./interfaces/virtual-class-repository.in
 import VirtualClass, { IVirtualClass } from "./schema/virtual-class";
 
 export class VirtualClassRepository implements IVirtualClasRepository {
+  getClassById = async (id: string): Promise<IVirtualClass | null> => {
+    const data = await VirtualClass.findById(id);
+    if (!data) return null;
+    return data;
+  };
   createVirtualClass = async (
     dto: CreateVirtualClassDto,
     userId: string
