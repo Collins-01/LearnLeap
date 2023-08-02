@@ -15,6 +15,7 @@ import swaggerUi from "swagger-ui-express";
 import specs from "./swagger-docs";
 import HealthRoutes from "./health/health.routes";
 import { EnrollmentsRoutes } from "./enrollments/enrollments.routes";
+import { VirtualClassRoutes } from "./virtual-class/virtual-class.routes";
 
 export default class App {
   private app: Application;
@@ -32,11 +33,13 @@ export default class App {
     const chapterRoutes = new ChapterRoutes();
     const healthRoutes = new HealthRoutes();
     const enrollmentsRoutes = new EnrollmentsRoutes();
+    const virtualClassRoutes = new VirtualClassRoutes();
     router.use(authRoutes.NAMESPACE, authRoutes.getRouter());
     router.use(courseRoutes.NAMESPACE, courseRoutes.getRouter());
     router.use(chapterRoutes.NAMESPACE, chapterRoutes.getRouter());
     router.use(healthRoutes.NAMESPACE, healthRoutes.getRouter());
     router.use(enrollmentsRoutes.NAMESPACE, enrollmentsRoutes.getRouter());
+    router.use(virtualClassRoutes.NAMESPACE, virtualClassRoutes.getRouter());
     this.app.get("/whoami", authMiddleware, (req: Request, res: Response) => {
       return res.status(200).json({
         data: req.user,
