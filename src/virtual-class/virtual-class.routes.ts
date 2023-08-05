@@ -20,13 +20,14 @@ export class VirtualClassRoutes {
       this.virtualClassController.createVirtualClass
     );
 
-    this.router.post(
-        "/generate-token",
-        //   this..validateCreateCourseRequest,
-        authMiddleware,
-        creatorMiddleware,
-        this.virtualClassController.createVirtualClass
-      );
+    // app.get('/rtc/:channel/:role/:tokentype/:uid', nocache , generateRTCToken)
+    this.router.get(
+      "/generate-token/:className/:classId/:role/:tokentype/:uid",
+      //   this..validateCreateCourseRequest,
+      authMiddleware,
+      creatorMiddleware,
+      this.virtualClassController.createVirtualClass
+    );
   }
 
   public getRouter(): Router {
