@@ -17,7 +17,7 @@ export default class AuthRoutes {
 
   private setupRoutes(): void {
     /**
-     * @swagger
+     * @openapi
      * /auth/login:
      *   post:
      *     summary: Log in with credentials
@@ -53,6 +53,12 @@ export default class AuthRoutes {
      *                 accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
      *       401:
      *         description: Invalid credentials.
+     *       
+     * 
+     * 
+     * 
+     * 
+     * 
      */
     this.router.post(
       "/login",

@@ -52,7 +52,7 @@ export default class AuthService {
       id: user._id,
     };
     const token = jwt.sign(tokenPayload, jwtSecret!, {
-      expiresIn: "2h",
+      expiresIn: "5d",
     });
     const tokenInfo = jwt.verify(token, jwtSecret) as jwt.JwtPayload;
 
@@ -60,7 +60,7 @@ export default class AuthService {
       user: user.toJSON(),
       token: {
         token,
-        expiry: tokenInfo,
+        expiry: tokenInfo.exp,
       },
     };
 
@@ -92,26 +92,22 @@ export default class AuthService {
       // await this.generateOtp(email);
       console.log(`New User Create ::::: ${JSON.stringify(userInfo)}`);
       // const data = {};
-      const jwtSecret = process.env.JWT_SECRET as string;
-      const tokenPayload: JWTPayload = {
-        email: userInfo.email,
-        id: userInfo._id,
-      };
-      const token = jwt.sign(tokenPayload, jwtSecret!, {
-        expiresIn: "2h",
-      });
-      const tokenInfo = jwt.verify(token, jwtSecret) as jwt.JwtPayload;
+      // const jwtSecret = process.env.JWT_SECRET as string;
+      // const tokenPayload: JWTPayload = {
+      //   email: userInfo.email,
+      //   id: userInfo._id,
+      // };
+      // const token = jwt.sign(tokenPayload, jwtSecret!, {
+      //   expiresIn: "5d",
+      // });
+      // const tokenInfo = jwt.verify(token, jwtSecret) as jwt.JwtPayload;
 
       const data = {
         user: userInfo.toJSON(),
-        token: {
-          token,
-          expiry: tokenInfo,
-        },
       };
       //   Send OTP to email
       // return `An Email has been sendt to ${dto.email}, it expires in 5 minutes`;
-      return data
+      return data;
     } catch (error) {
       throw new Error(`Failed to create user: ${error}`);
     }
