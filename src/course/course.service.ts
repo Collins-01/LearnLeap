@@ -5,15 +5,24 @@ import { ICourseRepository } from "./interface/course_repository_interface";
 import { CourseRepository } from "./repository/course_repository";
 import { ICourse } from "./schema/course";
 import logger from "../utils/logger";
+import FileService from "../files/file.service";
+import { FileType, IFIle } from "../files/schema/file";
 
 export default class CourseService {
   courseRepository: ICourseRepository = new CourseRepository();
+  fileService = new FileService();
 
   /**
    * createCourse
    */
-  public createCourse = async (dto: CreateCourseDto, instructorId: string) => {
+  public createCourse = async (
+    dto: CreateCourseDto,
+    instructorId: string,
+    media: Express.Multer.File
+  ) => {
+    let mediaFile: IFIle;
     try {
+      mediaFile = await this.fileService.uploadFile(media, FileType.IMAGE);
       const response = await this.courseRepository.create(
         {
           title: dto.title,
@@ -21,9 +30,10 @@ export default class CourseService {
           price: dto.price,
           type: dto.type,
         },
-        instructorId
+        instructorId,
+        mediaFile._id
       );
-      logger.debug(`Newly created course... ${response.toJSON()}`)
+      logger.debug(`Newly created course... ${response.toJSON()}`);
       const data = {
         message: `successfully created course titled ${dto.title}`,
         ...response.toJSON(),

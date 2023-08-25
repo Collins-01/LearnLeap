@@ -1,3 +1,4 @@
+import multer from "multer";
 import HttpException from "../errors/base-http-exception";
 import CourseService from "./course.service";
 import { Request, Response, NextFunction } from "express";
@@ -23,7 +24,8 @@ export default class CourseController {
     try {
       const data = await this.courseService.createCourse(
         request.body,
-        request.user?.id
+        request.user?.id,
+        request.file!
       );
       return response.status(200).json({
         data,

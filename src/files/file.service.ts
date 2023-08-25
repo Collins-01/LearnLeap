@@ -1,5 +1,8 @@
 import cloudinary from "cloudinary";
 import * as AWS from "aws-sdk";
+import File,{ FileType, IFIle } from "./schema/file";
+import * as uuid from 'uuid';
+import logger from "../utils/logger";
 export default class FileService {
   private s3Bucket: AWS.S3 = new AWS.S3();
   private initializeCloudinary = async () => {
@@ -24,11 +27,22 @@ export default class FileService {
   /**
    * Upload a file to cloudinary, and retrun the url
    */
-  public uploadFile = async (file: Express.Multer.File) => {
+  public uploadFile = async (file: Express.Multer.File,fileType:FileType):Promise<IFIle> => {
     try {
-      // const response = await cloudinary.v2.uploader.upload(file.path, {});
+      const response = await cloudinary.v2.uploader.upload(file.path, {});
+      const data= new File({
+        url: response.url,
+        name:  `${file.filename}- ${uuid.v4()}`,
+        key: '',
+        type: fileType, 
+
+      })
+      const newFile = await data.save();
+      return newFile.toJSON();
+      
     } catch (error) {
-      throw new Error("");
+      logger.debug(`Error Uploading file: ${error}`);
+      throw new Error(`${error}`);
     }
   };
 }

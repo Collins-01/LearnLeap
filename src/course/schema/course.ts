@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { IFIle } from "../../files/schema/file";
 
 enum CourseType {
   CSC = "CSC",
@@ -14,6 +15,7 @@ export interface ICourse extends Document {
   type: CourseType;
   createdAt: Date;
   rating: number;
+  backgroundImage: IFIle;
 }
 
 const courseSchema: Schema<ICourse> = new Schema({
@@ -43,6 +45,7 @@ const courseSchema: Schema<ICourse> = new Schema({
     type: Number,
     default: 0.0,
   },
+  backgroundImage: { type: Schema.Types.ObjectId, ref: "File" },
   createdAt: {
     type: Date,
     default: Date.now(),
