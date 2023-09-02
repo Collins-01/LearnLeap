@@ -15,6 +15,8 @@ import swaggerUi from "swagger-ui-express";
 import specs from "./swagger-docs";
 import HealthRoutes from "./health/health.routes";
 import { EnrollmentsRoutes } from "./enrollments/enrollments.routes";
+import * as AWS from "aws-sdk";
+import { FilesRoutes } from "./files/file.routes";
 
 export default class App {
   private app: Application;
@@ -32,11 +34,13 @@ export default class App {
     const chapterRoutes = new ChapterRoutes();
     const healthRoutes = new HealthRoutes();
     const enrollmentsRoutes = new EnrollmentsRoutes();
+    const filesRoutes = new FilesRoutes();
     router.use(authRoutes.NAMESPACE, authRoutes.getRouter());
     router.use(courseRoutes.NAMESPACE, courseRoutes.getRouter());
     router.use(chapterRoutes.NAMESPACE, chapterRoutes.getRouter());
     router.use(healthRoutes.NAMESPACE, healthRoutes.getRouter());
     router.use(enrollmentsRoutes.NAMESPACE, enrollmentsRoutes.getRouter());
+    router.use(filesRoutes.NAMESPACE, filesRoutes.getRouter());
     this.app.get("/whoami", authMiddleware, (req: Request, res: Response) => {
       return res.status(200).json({
         data: req.user,
@@ -49,6 +53,11 @@ export default class App {
     // Parse JSON data
     this.app.use(express.json());
     this.app.use("/documentation", swaggerUi.serve, swaggerUi.setup(specs));
+    AWS.config.update({
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      region: process.env.AWS_REGION, // e.g., 'us-east-1'
+    });
   }
 
   private setupErrorHandling() {

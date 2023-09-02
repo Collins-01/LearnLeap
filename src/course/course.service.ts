@@ -22,6 +22,7 @@ export default class CourseService {
   ) => {
     let mediaFile: IFIle;
     try {
+      logger.debug(`Creating Course with data :: ${JSON.stringify(dto)}`)
       mediaFile = await this.fileService.uploadFile(media, FileType.IMAGE);
       const response = await this.courseRepository.create(
         {
@@ -40,12 +41,12 @@ export default class CourseService {
       };
       return data;
     } catch (error) {
-      console.log(`Error creating course:: ${error}`);
+      console.log(`Error creating course:: ${JSON.stringify(error)}`);
       logger.error("This is an error message.", {
-        additionalData: "some data",
+        additionalData: JSON.stringify(error)
       });
 
-      throw new HttpException(500, `${error}`);
+      throw new HttpException(500, `${JSON.stringify(error)}`);
       // Catch and Handle MongoDB Errors
     }
   };

@@ -4,7 +4,7 @@ export enum FileType {
   IMAGE = "image",
   VIDEO = "video",
   AUDIO = "audio",
-  TEXT = "text",
+  DOCUMENT = "document",
 }
 export interface IFIle extends Document {
   url: string;

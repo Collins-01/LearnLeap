@@ -21,7 +21,7 @@ export default class CourseRoutes {
     
     this.router.post(
       "/create",
-      this.courseValidators.validateCreateCourseRequest,
+      // this.courseValidators.validateCreateCourseRequest,
       authMiddleware,
       creatorMiddleware,
       this.upload.single('file'),
