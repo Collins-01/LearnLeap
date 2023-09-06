@@ -53,11 +53,7 @@ export default class App {
     // Parse JSON data
     this.app.use(express.json());
     this.app.use("/documentation", swaggerUi.serve, swaggerUi.setup(specs));
-    AWS.config.update({
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      region: process.env.AWS_REGION, // e.g., 'us-east-1'
-    });
+    
   }
 
   private setupErrorHandling() {

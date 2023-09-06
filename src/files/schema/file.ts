@@ -6,14 +6,14 @@ export enum FileType {
   AUDIO = "audio",
   DOCUMENT = "document",
 }
-export interface IFIle extends Document {
+export interface IFile extends Document {
   url: string;
   name: string;
   key: string;
   type: FileType;
   createdAt: Date;
 }
-export const fileSchema: Schema<IFIle> = new Schema({
+export const fileSchema: Schema<IFile> = new Schema({
   url: {
     type: "string",
     required: [true, "A url to the file is needed"],
@@ -37,5 +37,5 @@ export const fileSchema: Schema<IFIle> = new Schema({
   },
 });
 
-const File = mongoose.model<IFIle>("File",fileSchema);
+const File = mongoose.model<IFile>("File",fileSchema);
 export default File

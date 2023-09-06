@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IFIle } from "../../files/schema/file";
+import { IFile } from "../../files/schema/file";
 
 enum CourseType {
   CSC = "CSC",
@@ -15,7 +15,8 @@ export interface ICourse extends Document {
   type: CourseType;
   createdAt: Date;
   rating: number;
-  backgroundImage: IFIle;
+  media: IFile;
+  backgroundImage: IFile;
 }
 
 const courseSchema: Schema<ICourse> = new Schema({
@@ -27,6 +28,8 @@ const courseSchema: Schema<ICourse> = new Schema({
     type: String,
     required: [true, "Please provide a description"],
   },
+
+  media: { type: Schema.Types.ObjectId, ref: "File" },
   instructorId: {
     type: String,
     ref: "User", // Reference the User model

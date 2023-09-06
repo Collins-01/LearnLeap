@@ -25,4 +25,4 @@ const bootstrap = async (includeDB: boolean) => {
   }
 };
 
-bootstrap(false);
+bootstrap(true);

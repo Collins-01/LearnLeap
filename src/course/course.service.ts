@@ -6,7 +6,7 @@ import { CourseRepository } from "./repository/course_repository";
 import { ICourse } from "./schema/course";
 import logger from "../utils/logger";
 import FileService from "../files/file.service";
-import { FileType, IFIle } from "../files/schema/file";
+import { FileType, IFile } from "../files/schema/file";
 
 export default class CourseService {
   courseRepository: ICourseRepository = new CourseRepository();
@@ -20,7 +20,7 @@ export default class CourseService {
     instructorId: string,
     media: Express.Multer.File
   ) => {
-    let mediaFile: IFIle;
+    let mediaFile: IFile;
     try {
       logger.debug(`Creating Course with data :: ${JSON.stringify(dto)}`)
       mediaFile = await this.fileService.uploadFile(media, FileType.IMAGE);
