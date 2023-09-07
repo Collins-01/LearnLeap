@@ -18,13 +18,18 @@ export class CourseRepository implements ICourseRepository {
       logger.debug(`Successfully deleted course with id ${id}`);
     }
   };
-  create = async (dto: CreateCourseDto, tutorId: string): Promise<ICourse> => {
+  create = async (
+    dto: CreateCourseDto,
+    tutorId: string,
+    backgroundImageId: string
+  ): Promise<ICourse> => {
     const data = new Course({
       title: dto.title,
       description: dto.description,
       price: dto.price,
       type: dto.type,
       instructorId: tutorId,
+      backgroundImage: backgroundImageId,
     });
     const createdCourse = await data.save();
 

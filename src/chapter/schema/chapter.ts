@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IFIle, fileSchema } from "../../files/schema/file";
+import { IFile, fileSchema } from "../../files/schema/file";
 
 export interface IChapter extends Document {
   index: number;
@@ -8,7 +8,7 @@ export interface IChapter extends Document {
   content: string;
   backgroundImage?: string | null | undefined;
   createdAt: Date;
-  resources: IFIle[]
+  resources: IFile[]
 }
 
 const chapterSchema: Schema<IChapter> = new Schema({
