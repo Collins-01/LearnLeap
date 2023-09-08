@@ -29,7 +29,6 @@ export class EnrollmentsRoutes {
 
     this.router.get(
       "/all",
-
       authMiddleware,
       studentMiddleware,
       this.enrollmentsController.getAllEnrollments

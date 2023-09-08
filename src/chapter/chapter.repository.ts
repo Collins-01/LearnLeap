@@ -6,7 +6,7 @@ import logger from "../utils/logger";
 import { CreateChapterDto } from "./dtos/index";
 import Chapter, { IChapter } from "./schema/chapter";
 export default class ChapterRepository {
-  private courseRepository: ICourseRepository = new CourseRepository();
+  private courseRepository = new CourseRepository();
   /*
     Create a new Chapter under a specific course.
     

@@ -1,71 +1,50 @@
 import Enrollment, { IEnrollment } from "./schema/enrollments";
-import { CreateEnrollmentDTO } from "./dtos/create_enrollment.dto";
-import { UpdateEnrollmentDTO } from "./dtos/update_enrollment.dto";
-import IEnrollmentRepository from "./enrollment-repository.interface";
-import { IEnrollmentPayload } from "./interface/enrollments-payload-interface";
 
-export default class EnrollmentRepository implements IEnrollmentRepository {
-  updateEnrollmentStatus = async (
-    userId: string,
-    dto: UpdateEnrollmentDTO
-  ): Promise<IEnrollment | null> => {
-    const response = await Enrollment.findOne({
-      courseId: dto.courseId,
-      chapterId: dto.chapterId,
-      userId,
-    });
-    if (!response) {
-      return null;
-    }
-    return response.toJSON();
-  };
-  getSingleEnrollmentByCourseAndUserId = async (
-    userId: string,
-    courseId: string
-  ): Promise<IEnrollment | null> => {
-    const response = await Enrollment.findOne({
-      userId: userId,
-      courseId: courseId,
-    }).exec();
-    if (!response) {
-      return null;
-    } else {
-      return response;
-    }
-  };
+export default class EnrollmentRepository {
   async createEnrollment(
-    dto: CreateEnrollmentDTO,
+    courseId: string,
     userId: string
   ): Promise<IEnrollment | null> {
     const data = new Enrollment({
-      chapterId: dto.chapterId,
-      courseId: dto.courseId,
-      userId,
+      course: courseId,
+      user: userId,
     });
     const response = await data.save();
-    return response.toJSON();
+    return response;
   }
   getAllUserEnrollments = async (userId: string): Promise<IEnrollment[]> => {
-    const response = await Enrollment.find({ _id: userId }).exec();
-    return response.map((e) => e.toJSON());
+    const response = await Enrollment.find({ user: userId }).populate("course");
+    return response;
   };
 
   getSingleEnrollment = async (id: string): Promise<IEnrollment | null> => {
-    const enrollment = await Enrollment.findById(id);
+    const enrollment = await Enrollment.findById(id).populate("user");
     if (!enrollment) return null;
     else return enrollment;
   };
 
-  deleteEnrollment = async (id: string): Promise<boolean> => {
-    const result = await Enrollment.deleteOne({ _id: id });
+  deleteEnrollment = async (id: string, userId: string): Promise<boolean> => {
+    const result = await Enrollment.deleteOne({ _id: id, user: userId });
     if (result.deletedCount === 1) return true;
     else return false;
   };
 
-  getAllEnrollments = async (userId: string): Promise<IEnrollmentPayload[]> => {
-    const enrollments = await Enrollment.find().populate("title", "", "").where({
-      userId,
-    });
-    return [];
+  getAllEnrollments = async (userId: string): Promise<IEnrollment[]> => {
+    const enrollments = await Enrollment.find({ user: userId }).populate(
+      "course"
+    );
+    return enrollments;
+  };
+
+  checkIfEnrollmentExists = async (
+    userId: string,
+    courseId: string
+  ): Promise<IEnrollment | null> => {
+    const enrollment = await Enrollment.findOne({
+      user: userId,
+      course: courseId,
+    }).exec();
+    if (!enrollment) return null;
+    else return enrollment;
   };
 }

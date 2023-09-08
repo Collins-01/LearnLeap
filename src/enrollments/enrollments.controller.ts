@@ -10,7 +10,7 @@ export default class EnrollmentsController {
   enroll = async (request: Request, response: Response, next: NextFunction) => {
     try {
       const result = await this.enrollmentsService.createEnrollment(
-        request.body,
+        request.body.courseId,
         request.user!.id
       );
       return response.status(201).json({
@@ -30,6 +30,7 @@ export default class EnrollmentsController {
     next: NextFunction
   ) => {
     try {
+      console.log(`CourseID to be deleted: ${request.params.id}`)
       const result = await this.enrollmentsService.cancelEnrollment(
         request.params.id,
         request.user!.id

@@ -1,36 +1,25 @@
-import { ICourseRepository } from "../course/interface/course_repository_interface";
-import { CourseRepository } from "../course/repository/course_repository";
 import { ForbiddenRequestError, NotFoundRequestError } from "../errors";
 import HttpException from "../errors/base-http-exception";
-import { CreateEnrollmentDTO } from "./dtos/create_enrollment.dto";
-import IEnrollmentRepository from "./enrollment-repository.interface";
+
 import EnrollmentRepository from "./enrollment.repository";
 
 export default class EnrollmentsService {
-  private enrollmentsRepository: IEnrollmentRepository =
-    new EnrollmentRepository();
-  private coursesRepository: ICourseRepository = new CourseRepository();
+  private enrollmentsRepository = new EnrollmentRepository();
 
-  createEnrollment = async (dto: CreateEnrollmentDTO, userId: string) => {
+  createEnrollment = async (courseId: string, userId: string) => {
+    console.log(`CourseID ${courseId}`);
     const enrollmentExists =
-      await this.enrollmentsRepository.getSingleEnrollmentByCourseAndUserId(
+      await this.enrollmentsRepository.checkIfEnrollmentExists(
         userId,
-        dto.courseId
+        courseId
       );
     if (enrollmentExists) {
       throw new ForbiddenRequestError(
         "A user can not enroll for a course twice."
       );
     }
-    const course = await this.coursesRepository.findById(dto.courseId);
-    if (!course) {
-      throw new NotFoundRequestError("Course with this id does not exist.");
-    }
-    //TODO: Check if course is free
-    // if (course.price > 0.0) {
-    // }
     const response = await this.enrollmentsRepository.createEnrollment(
-      dto,
+      courseId,
       userId
     );
     if (!response) {
@@ -49,11 +38,14 @@ export default class EnrollmentsService {
     if (!enrollment) {
       throw new NotFoundRequestError("Enrollment not found.");
     }
-    if (enrollment.userId !== userId) {
-      throw new NotFoundRequestError("User did not enroll for this course");
-    }
+    console.log(userId);
+    console.log(enrollment.user);
+    // if (enrollment.user._id !== userId) {
+    //   throw new NotFoundRequestError("User did not enroll for this course");
+    // }
     const result = await this.enrollmentsRepository.deleteEnrollment(
-      enrollmentId
+      enrollmentId,
+      userId
     );
     if (!result) {
       throw new HttpException(500, "failed to delete enrollment.");

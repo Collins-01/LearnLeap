@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { IFile } from "../../files/schema/file";
+import { IUser } from "../../user/schema/user";
 
 enum CourseType {
   CSC = "CSC",
@@ -10,13 +11,12 @@ enum CourseType {
 export interface ICourse extends Document {
   title: string;
   description: string;
-  instructorId: string; // Reference to the User model
+  instructor: IUser["_id"]; // Reference to the User model
   price: number;
   type: CourseType;
   createdAt: Date;
-  rating: number;
-  media: IFile;
-  backgroundImage: IFile;
+  media: IFile["_id"];
+  backgroundImage: IFile["_id"];
 }
 
 const courseSchema: Schema<ICourse> = new Schema({
@@ -28,26 +28,21 @@ const courseSchema: Schema<ICourse> = new Schema({
     type: String,
     required: [true, "Please provide a description"],
   },
-
   media: { type: Schema.Types.ObjectId, ref: "File" },
-  instructorId: {
-    type: String,
+  instructor: {
+    type: Schema.Types.ObjectId,
     ref: "User", // Reference the User model
-    required: [true, "Please provide an instructorId"],
   },
   price: {
     type: Number,
-    required: [true, "Please provide a price"],
+    default: 0.0,
   },
   type: {
     type: String,
     required: [true, "Please provide a type"],
     enum: Object.values(CourseType),
   },
-  rating: {
-    type: Number,
-    default: 0.0,
-  },
+
   backgroundImage: { type: Schema.Types.ObjectId, ref: "File" },
   createdAt: {
     type: Date,
@@ -55,10 +50,6 @@ const courseSchema: Schema<ICourse> = new Schema({
   },
 });
 
-// courseSchema.methods.toJSON = function () {
-//   const courseObject = this.toObject();
-//   return courseObject;
-// };
 
 const Course = mongoose.model<ICourse>("Course", courseSchema);
 

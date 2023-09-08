@@ -1,15 +1,13 @@
 import HttpException from "../errors/base-http-exception";
-import { UserRole } from "../user/schema/user";
 import { CreateCourseDto } from "./dtos";
-import { ICourseRepository } from "./interface/course_repository_interface";
 import { CourseRepository } from "./repository/course_repository";
-import { ICourse } from "./schema/course";
 import logger from "../utils/logger";
 import FileService from "../files/file.service";
-import { FileType, IFile } from "../files/schema/file";
+import File, { FileType, IFile } from "../files/schema/file";
+import * as uuid from "uuid";
 
 export default class CourseService {
-  courseRepository: ICourseRepository = new CourseRepository();
+  courseRepository = new CourseRepository();
   fileService = new FileService();
 
   /**
@@ -18,12 +16,26 @@ export default class CourseService {
   public createCourse = async (
     dto: CreateCourseDto,
     instructorId: string,
-    media: Express.Multer.File
+    files: Express.Multer.File[]
   ) => {
-    let mediaFile: IFile;
+    // let mediaFile: IFile;
     try {
-      logger.debug(`Creating Course with data :: ${JSON.stringify(dto)}`)
-      mediaFile = await this.fileService.uploadFile(media, FileType.IMAGE);
+      logger.debug(`Creating Course with data :: ${JSON.stringify(dto)}`);
+      // mediaFile = await this.fileService.uploadFile(media, FileType.IMAGE);
+      const backgroundImageData = new File({
+        url: "https://images.unsplash.com/photo-1577760258779-e787a1733016?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+        name: `${dto.title}-${uuid.v4()}`,
+        key: uuid.v4(),
+        type: FileType.IMAGE,
+      });
+      const backgroundImage = await backgroundImageData.save();
+      const mediaData = new File({
+        url: "https://docs.google.com/document/d/1pnr-lSMeXdZc4gfEOAOZMoGU37Prtg9mEXTAawe1xUg/edit?usp=sharing",
+        name: `${dto.title}-${uuid.v4()}`,
+        key: uuid.v4(),
+        type: FileType.DOCUMENT,
+      });
+      const media = await backgroundImageData.save();
       const response = await this.courseRepository.create(
         {
           title: dto.title,
@@ -32,7 +44,8 @@ export default class CourseService {
           type: dto.type,
         },
         instructorId,
-        mediaFile._id
+        backgroundImage._id,
+        media._id
       );
       logger.debug(`Newly created course... ${response.toJSON()}`);
       const data = {
@@ -43,18 +56,12 @@ export default class CourseService {
     } catch (error) {
       console.log(`Error creating course:: ${JSON.stringify(error)}`);
       logger.error("This is an error message.", {
-        additionalData: JSON.stringify(error)
+        additionalData: JSON.stringify(error),
       });
-
       throw new HttpException(500, `${JSON.stringify(error)}`);
       // Catch and Handle MongoDB Errors
     }
   };
-
-  /**
-   * updateCourse
-   */
-  public updateCourse() {}
 
   /**
    * getCourseById
@@ -80,7 +87,7 @@ export default class CourseService {
     if (!course) {
       throw new HttpException(404, `Not course found with this id ${id}`);
     }
-    if (course.instructorId !== creatorId) {
+    if (course.instructor._id !== creatorId) {
       throw new HttpException(
         403,
         `User can only delete course that was creted by the user.`
@@ -112,6 +119,15 @@ export default class CourseService {
     const response = await this.courseRepository.findAllByCreatorId(id);
     return {
       message: `Successfully retrieved all courses created by instructor`,
+      data: {
+        ...response,
+      },
+    };
+  };
+  public getCoursesByType = async (courseType: string) => {
+    const response = await this.courseRepository.findByType(courseType);
+    return {
+      message: `Successfully retrieved all courses`,
       data: {
         ...response,
       },

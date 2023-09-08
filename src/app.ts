@@ -17,6 +17,7 @@ import HealthRoutes from "./health/health.routes";
 import { EnrollmentsRoutes } from "./enrollments/enrollments.routes";
 import * as AWS from "aws-sdk";
 import { FilesRoutes } from "./files/file.routes";
+import CommentsRoutes from "./comments/comments.routes";
 
 export default class App {
   private app: Application;
@@ -35,12 +36,14 @@ export default class App {
     const healthRoutes = new HealthRoutes();
     const enrollmentsRoutes = new EnrollmentsRoutes();
     const filesRoutes = new FilesRoutes();
+    const commentsRoutes = new CommentsRoutes();
     router.use(authRoutes.NAMESPACE, authRoutes.getRouter());
     router.use(courseRoutes.NAMESPACE, courseRoutes.getRouter());
     router.use(chapterRoutes.NAMESPACE, chapterRoutes.getRouter());
     router.use(healthRoutes.NAMESPACE, healthRoutes.getRouter());
     router.use(enrollmentsRoutes.NAMESPACE, enrollmentsRoutes.getRouter());
     router.use(filesRoutes.NAMESPACE, filesRoutes.getRouter());
+    router.use(commentsRoutes.NAMESPACE, commentsRoutes.getRouter());
     this.app.get("/whoami", authMiddleware, (req: Request, res: Response) => {
       return res.status(200).json({
         data: req.user,
@@ -53,7 +56,6 @@ export default class App {
     // Parse JSON data
     this.app.use(express.json());
     this.app.use("/documentation", swaggerUi.serve, swaggerUi.setup(specs));
-    
   }
 
   private setupErrorHandling() {

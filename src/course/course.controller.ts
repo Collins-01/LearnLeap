@@ -22,16 +22,14 @@ export default class CourseController {
       );
     }
     try {
-      // const data = await this.courseService.createCourse(
-      //   request.body,
-      //   request.user?.id,
-      //   request.file!
-      // );
+      const files = request.files!;
+      console.log(`Files: ${files.length}`);
+      const data = await this.courseService.createCourse(
+        request.body,
+        request.user?.id,
+        []
+      );
 
-      const data = {
-        files: request.files?.length,
-        // media: request.files["media"][0],
-      };
       return response.status(200).json({
         data,
       });
@@ -92,6 +90,20 @@ export default class CourseController {
     try {
       const data = await this.courseService.getAllCoursesByInstructorId(
         request.params.id
+      );
+      return response.status(200).json(data);
+    } catch (error) {
+      next(error);
+    }
+  };
+  getCourseByType = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const data = await this.courseService.getCoursesByType(
+        request.params.type
       );
       return response.status(200).json(data);
     } catch (error) {

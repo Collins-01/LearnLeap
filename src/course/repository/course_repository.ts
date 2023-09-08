@@ -1,9 +1,8 @@
 import logger from "../../utils/logger";
 import { CreateCourseDto } from "../dtos";
-import { ICourseRepository } from "../interface/course_repository_interface";
 import Course, { ICourse } from "../schema/course";
 
-export class CourseRepository implements ICourseRepository {
+export class CourseRepository {
   findAllByCreatorId = async (id: string): Promise<ICourse[]> => {
     const response = await Course.find({
       instructorId: id,
@@ -21,15 +20,17 @@ export class CourseRepository implements ICourseRepository {
   create = async (
     dto: CreateCourseDto,
     tutorId: string,
-    backgroundImageId: string
+    backgroundImageId: string,
+    mediaId: string
   ): Promise<ICourse> => {
     const data = new Course({
       title: dto.title,
       description: dto.description,
       price: dto.price,
       type: dto.type,
-      instructorId: tutorId,
+      instructor: tutorId,
       backgroundImage: backgroundImageId,
+      media: mediaId,
     });
     const createdCourse = await data.save();
 
@@ -37,11 +38,22 @@ export class CourseRepository implements ICourseRepository {
   };
 
   async findById(id: string): Promise<ICourse | null> {
-    return Course.findById(id).exec();
+    return Course.findById(id)
+      .populate("instructor")
+      .populate("media")
+      .populate("backgroundImage");
   }
 
   findAll = async (): Promise<ICourse[]> => {
-    const courses = await Course.find().exec();
-    return Object.values(courses);
+    const courses = await Course.find().populate("instructor");
+    return courses;
+    // return Object.values(courses);
+  };
+  findByType = async (courseType: string): Promise<ICourse[]> => {
+    const courses = await Course.find({
+      type: courseType,
+    }).populate("instructor");
+    return courses;
+    // return Object.values(courses);
   };
 }

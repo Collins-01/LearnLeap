@@ -4,8 +4,8 @@ import { IUser } from "../user/schema/user";
 export interface IComment extends Document {
   comment: string;
   createdAt: Date;
-  courseId: string;
-  authorId: string;
+  course: ICourse["_id"];
+  author: IUser["_id"];
 }
 
 const commentSchema: Schema<IComment> = new Schema<IComment>({
@@ -13,16 +13,13 @@ const commentSchema: Schema<IComment> = new Schema<IComment>({
     type: "string",
     required: [true, "Comment is required"],
   },
-
-  authorId: {
-    type: "string",
+  author: {
+    type: Schema.Types.ObjectId,
     ref: "User",
-    required: [true, "Please provide an instructorId"],
   },
-  courseId: {
-    type: "string",
+  course: {
+    type: Schema.Types.ObjectId,
     ref: "Course",
-    required: [true, "Please provide an instructorId"],
   },
 
   createdAt: {
@@ -30,3 +27,6 @@ const commentSchema: Schema<IComment> = new Schema<IComment>({
     default: Date.now(),
   },
 });
+
+const Comment = mongoose.model<IComment>("Comment", commentSchema);
+export default Comment;

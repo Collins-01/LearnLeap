@@ -1,34 +1,23 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { IUser } from "../../user/schema/user";
+import { ICourse } from "../../course/schema/course";
 
 export interface IEnrollment extends Document {
-  userId: string;
-  courseId: string;
-  chapterId: string;
-  progress: number;
+  user: IUser["_id"];
+  course: ICourse["_id"];
   createdAt: Date;
 }
 
 const enrollmentSchema: Schema<IEnrollment> = new Schema({
-  userId: {
-    type: "string",
-    required: [true, "user id is required"],
+  course: {
+    type: Schema.Types.ObjectId,
+    ref: "Course",
+  },
+  user: {
+    type: Schema.Types.ObjectId,
     ref: "User",
   },
 
-  courseId: {
-    type: "string",
-    required: [true, "course id is required"],
-    ref: "Course",
-  },
-  chapterId: {
-    type: "string",
-    required: [true, "chapter id is required"],
-    ref: "Chapter",
-  },
-  progress: {
-    type: "number",
-    default: 0.0,
-  },
   createdAt: {
     type: Date,
     default: Date.now,

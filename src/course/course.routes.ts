@@ -45,6 +45,7 @@ export default class CourseRoutes {
       this.courseController.getAllCoursesByInstructor
     );
     this.router.get("/", authMiddleware, this.courseController.getAllCourses);
+    this.router.get("/:type", authMiddleware, this.courseController.getCourseByType);
   }
 
   public getRouter(): Router {
