@@ -23,7 +23,7 @@ export default class CourseController {
     }
     try {
       const files = request.files!;
-      console.log(`Files: ${files.length}`);
+      console.log(`Files to be uploaded: ${files.length}`);
       const data = await this.courseService.createCourse(
         request.body,
         request.user?.id,

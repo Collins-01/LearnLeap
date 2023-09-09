@@ -18,19 +18,14 @@ export default class FileController {
     response: Response,
     next: NextFunction
   ) => {
-    console.log(`File from request : ${JSON.stringify(request.body)}`);
-
-    // const data = await this.fileService.uploadFile(
-    //   request.file!,
-    //   FileType.IMAGE
-    // );
     try {
+      console.log(`File to be uploaded: ${request.file?.originalname}`)
+      await this.fileService.uploadFile(request.file!, FileType.IMAGE);
       return response.status(200).json({
         message: "Successfully uploaded  file",
-        // data,
       });
     } catch (error) {
-      console.log(`Uloading file: ${error}`);
+      console.log(`Error Uloading file: ${JSON.stringify(error)}`);
       next(error);
     }
   };

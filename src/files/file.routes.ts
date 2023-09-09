@@ -2,14 +2,13 @@ import { Router } from "express";
 import FileController from "./file.controller";
 import FileUploadValidators from "./middlewares/file-uploads-validators";
 import multer, { Multer } from "multer";
+import FileService from "./file.service";
 
 export class FilesRoutes {
   private readonly fileController = new FileController();
   private readonly fileUploadsValidators = new FileUploadValidators();
   private readonly router: Router;
-  upload = multer({
-    dest: 'uploads/' 
-  });
+  private fileService = new FileService();
   constructor() {
     this.router = Router();
     this.setUpRoutes();
@@ -19,11 +18,10 @@ export class FilesRoutes {
    * setUpRoutes
    */
 
-  
   public setUpRoutes(): void {
     this.router.post(
       "/upload-single",
-      // this.upload.single("file"),
+      this.fileService.uploadSingle("file"),
       this.fileController.uploadSingleFile
     );
   }

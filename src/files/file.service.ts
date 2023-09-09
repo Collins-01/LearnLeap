@@ -28,13 +28,7 @@ export default class FileService {
   };
 
   public uploadForCourse = () => {
-    return this.upload.fields([
-      {
-        name: "files",
-        maxCount: 2,
-      },
-      
-    ]);
+    return this.upload.array("files", 2);
   };
 
   saveFileMetadata() {}
@@ -45,42 +39,9 @@ export default class FileService {
   public uploadFile = async (
     file: Express.Multer.File,
     fileType: FileType
-  ): Promise<IFile> => {
-    return new Promise<IFile>((resolve, reject) => {
-      cloudinary.v2.uploader.upload_stream(
-        { resource_type: "auto" },
-        async (error, result) => {
-          if (error) {
-            console.error("Error uploading to Cloudinary:", error);
-            reject(
-              new HttpException(500, "Failed to upload file to Cloudinary.")
-            );
-            return;
-          }
-
-          // Result contains Cloudinary file information
-          if (!result) {
-            reject(new HttpException(500, "File not available."));
-            return;
-          }
-
-          const { url, public_id } = result;
-          const data = new File({
-            url: url,
-            name: file.originalname,
-            key: public_id,
-            type: fileType,
-          });
-
-          try {
-            const metadata = await data.save();
-            resolve(metadata);
-          } catch (err) {
-            console.error("Error saving file metadata:", err);
-            reject(new HttpException(500, "Failed to save file metadata."));
-          }
-        }
-      );
-    });
+  ): Promise<IFile | null> => {
+    const result = await cloudinary.v2.uploader.upload(file.path);
+    console.log(`Result from uploaded file ::: ${result.url}`);
+    return null;
   };
 }

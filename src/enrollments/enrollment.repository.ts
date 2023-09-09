@@ -10,7 +10,7 @@ export default class EnrollmentRepository {
       user: userId,
     });
     const response = await data.save();
-    return response;
+    return response.toJSON();
   }
   getAllUserEnrollments = async (userId: string): Promise<IEnrollment[]> => {
     const response = await Enrollment.find({ user: userId }).populate("course");
@@ -30,10 +30,14 @@ export default class EnrollmentRepository {
   };
 
   getAllEnrollments = async (userId: string): Promise<IEnrollment[]> => {
-    const enrollments = await Enrollment.find({ user: userId }).populate(
-      "course"
-    );
-    return enrollments;
+    const enrollments = await Enrollment.find({ user: userId })
+      .populate("course", {
+        // populate: { path: "instructor" },
+        
+      })
+      .exec();
+    // .populate("instructor");
+    return Object.values(enrollments);
   };
 
   checkIfEnrollmentExists = async (
