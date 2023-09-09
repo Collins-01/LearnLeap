@@ -1,4 +1,4 @@
-class SignupDTO {
+interface SignupDTO {
   email: string;
   password: string;
   first_name: string;

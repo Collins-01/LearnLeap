@@ -6,7 +6,7 @@ import logger from "./utils/logger";
 const bootstrap = async (includeDB: boolean) => {
   dotenv.config();
 
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 5000;
 
   if (includeDB) {
     // logger.info("Starting server with Database connection.................");
