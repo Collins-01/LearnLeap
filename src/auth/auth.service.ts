@@ -46,7 +46,7 @@ export default class AuthService {
       throw new HttpException(403, "Invalid credentials");
     }
 
-    const jwtSecret = process.env.JWT_SECRET as string;
+    const jwtSecret = 'my secret';
     const tokenPayload: JWTPayload = {
       email: user.email,
       id: user._id,
